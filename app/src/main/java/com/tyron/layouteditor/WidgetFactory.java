@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.tyron.layouteditor.editor.EditorView;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
@@ -25,16 +26,15 @@ public class WidgetFactory {
         this.root = root;
     }
     @NonNull
-    public <T extends View> T createWidget(Context context, Widget widget) {
+    public <T extends BaseWidget> T createWidget(Context context, Widget widget) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(widget.getClazz());
             Constructor<T> constructor = clazz.getConstructor(Context.class);
 
             T view = constructor.newInstance(context);
-            setDefaultAttributes(view, widget);
+            setDefaultAttributes(view.getAsView(), widget);
             return view;
         }catch(Exception e){
-
             throw new IllegalArgumentException("Invalid widget: " + widget.getClazz());
         }
     }

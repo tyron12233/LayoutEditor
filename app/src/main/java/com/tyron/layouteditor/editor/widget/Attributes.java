@@ -15,7 +15,12 @@ public class Attributes {
         types.put(View.Weight, TYPE_NUMBER);
         types.put(View.Width, TYPE_NUMBER);
         types.put(View.Height, TYPE_NUMBER);
+
         types.put(View.AlignParentBottom, TYPE_BOOLEAN);
+
+        types.put(View.ToLeftOf, TYPE_STRING);
+        types.put(View.ToRightOf, TYPE_STRING);
+       // types.put(View.)
     }
     public static class View {
 

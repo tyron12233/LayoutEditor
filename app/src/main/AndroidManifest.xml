@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LayoutEditor">
-        <activity android:name=".DesignActivity"
+        <activity android:name=".ViewSourceActivity"></activity>
+        <activity
+            android:name=".DesignActivity"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

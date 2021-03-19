@@ -18,9 +18,9 @@ import java.util.ArrayList;
 public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHolder> {
 
     private final ArrayList<Widget> data;
-    private final BottomSheetBehavior behavior;
+    private final BottomSheetBehavior<View> behavior;
 
-    public WidgetsAdapter(ArrayList<Widget> data, BottomSheetBehavior behavior){
+    public WidgetsAdapter(ArrayList<Widget> data, BottomSheetBehavior<View> behavior){
         this.data = data;
         this.behavior = behavior;
     }

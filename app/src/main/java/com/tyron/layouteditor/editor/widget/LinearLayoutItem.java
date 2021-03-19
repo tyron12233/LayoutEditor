@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.GradientDrawable;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,12 +29,18 @@ import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionSet;
 import androidx.transition.TransitionManager;
 
+import com.google.gson.Gson;
 import com.tyron.layouteditor.EditorContext;
+import com.tyron.layouteditor.IdGenerator;
+import com.tyron.layouteditor.SimpleIdGenerator;
 import com.tyron.layouteditor.ViewManager;
+import com.tyron.layouteditor.ViewSourceActivity;
 import com.tyron.layouteditor.WidgetFactory;
 import com.tyron.layouteditor.editor.PropertiesView;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.parser.ViewLayoutExporter;
+import com.tyron.layouteditor.parser.ViewLayoutInflater;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.Null;
@@ -40,9 +48,15 @@ import com.tyron.layouteditor.values.ObjectValue;
 import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Value;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 
 @SuppressLint("ViewConstructor")
@@ -172,6 +186,16 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
     public void onClick(View v) {
         final PropertiesView d = new PropertiesView(this);
         d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "null");
+//        try {
+//            String str = ViewLayoutExporter.inflate(this);
+//            Intent intent = new Intent(getContext(), ViewSourceActivity.class);
+//            intent.putExtra("source", str);
+//            getContext().startActivity(intent);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        Toast.makeText(getContext(), SimpleIdGenerator.getInstance().getString(getId()), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -180,6 +204,9 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
         return this;
     }
 
+    public Layout getLayout(){
+        return new Layout(Widget.LINEAR_LAYOUT, getAttributes(), null, null);
+    }
     @NonNull
     @Override
     public ArrayList<Attribute> getAttributes() {
@@ -192,18 +219,42 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
 		if(getParent() instanceof LinearLayoutItem){
 			arrayList.add(new Attribute(Attributes.View.Weight, new Primitive(((LinearLayout.LayoutParams)getLayoutParams()).weight)));
 		}
+
+        SimpleIdGenerator idGenerator = SimpleIdGenerator.getInstance();
+
 		if(getParent() instanceof RelativeLayoutItem){
 
 		    int[] rules = ((RelativeLayout.LayoutParams)getLayoutParams()).getRules();
+            //the index is the name of the rule and the actual value
+            //is the value of the rule
+		    for(int i = 0; i < rules.length; i++){
+		        int rule = rules[i];
 
-		    for(int rule : rules){
-		        Value val = (rule == 0 ? new Null() : new Primitive(rule));
-                switch(rule){
+                switch(i){
+                    case RelativeLayout.LEFT_OF:
+                        arrayList.add(new Attribute(Attributes.View.ToLeftOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                        continue;
+                    case RelativeLayout.RIGHT_OF:
+                        arrayList.add(new Attribute(Attributes.View.ToRightOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                        continue;
+                    case RelativeLayout.ABOVE:
+                        arrayList.add(new Attribute(Attributes.View.Above, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                        continue;
+                    case RelativeLayout.BELOW:
+                        arrayList.add(new Attribute(Attributes.View.Below, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                        continue;
+                    case RelativeLayout.ALIGN_BASELINE:
+                        arrayList.add(new Attribute(Attributes.View.AlignBaseline, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                        continue;
+                    case RelativeLayout.ALIGN_LEFT:
+                        arrayList.add(new Attribute(Attributes.View.AlignLeft, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                        continue;
                     case RelativeLayout.ALIGN_PARENT_BOTTOM:
-                        arrayList.add(new Attribute(Attributes.View.AlignParentBottom, val));
+                        arrayList.add(new Attribute(Attributes.View.AlignParentBottom, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
                         continue;
                     case RelativeLayout.ALIGN_PARENT_TOP:
-                        arrayList.add(new Attribute(Attributes.View.AlignParentTop, val));
+                        arrayList.add(new Attribute(Attributes.View.AlignParentTop, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                        continue;
                 }
             }
         }

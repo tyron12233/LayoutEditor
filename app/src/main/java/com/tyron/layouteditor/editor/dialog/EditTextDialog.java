@@ -18,8 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.tyron.layouteditor.R;
+import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Value;
 
 public class EditTextDialog extends DialogFragment {
 
@@ -43,7 +45,21 @@ public class EditTextDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setPositiveButton("Apply", (dialog, id) -> {
-           attribute.value = new Primitive(Integer.valueOf(editText.getText().toString()));
+
+            Value value = null;
+            String textValue = editText.getText().toString();
+            switch(Attributes.getType(attribute.key)){
+                case Attributes.TYPE_BOOLEAN:
+                    attribute.value = new Primitive(Boolean.parseBoolean(textValue));
+                    break;
+                case Attributes.TYPE_NUMBER:
+                    attribute.value = new Primitive(Integer.parseInt(textValue));
+                    break;
+                default :
+                case Attributes.TYPE_STRING :
+                    attribute.value = new Primitive(textValue);
+                    break;
+            }
            listener.onUpdate(attribute);
         });
 

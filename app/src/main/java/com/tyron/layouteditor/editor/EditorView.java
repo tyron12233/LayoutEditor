@@ -13,9 +13,15 @@ import android.widget.LinearLayout;
 
 import com.tyron.layouteditor.EditorContext;
 import com.tyron.layouteditor.WidgetFactory;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
+import com.tyron.layouteditor.parser.ViewLayoutInflater;
 
+import org.w3c.dom.Node;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
 public class EditorView extends LinearLayout {
@@ -30,7 +36,13 @@ public class EditorView extends LinearLayout {
 	}
 
 
-	
+	/**
+	 * @return returns the root layout of the editor
+	 */
+	public BaseWidget getRootEditorView(){
+		return root;
+	}
+
 	private void init() {
 		setOrientation(VERTICAL);
 
@@ -38,6 +50,15 @@ public class EditorView extends LinearLayout {
 		root.setRoot(true);
 		root.setOrientation(VERTICAL);
 		addView(root, new LayoutParams(-1,-1));
+
+//		View testView = null;
+//		try {
+//			testView = ViewLayoutInflater.inflate(editorContext, getContext().getAssets().open("test/test.xml"), this);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+
+		//addView(testView);
 		
 //		LayoutTransition layoutTransition = new LayoutTransition();
 //		layoutTransition.enableTransitionType(LayoutTransition.CHANGING);

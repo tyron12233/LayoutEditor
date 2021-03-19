@@ -19,4 +19,8 @@ public class Attribute {
 		this.key = key;
 		this.value = value;
 	}
+
+	public Attribute copy() {
+			return new Attribute(id, key, value.copy());
+	}
 }

@@ -41,9 +41,9 @@ public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.Vi
 		final Attribute attr = data.get(position);
 		
 		holder.name.setText(attr.key);
-		
+		//TODO: add different dialogs for different types
 		holder.itemView.setOnClickListener((v) -> {
-			Toast.makeText(v.getContext(), attr.value.getAsString(), Toast.LENGTH_LONG).show();
+			//Toast.makeText(v.getContext(), attr.value.getAsString(), Toast.LENGTH_LONG).show();
             EditTextDialog dialog = new EditTextDialog(attr);
             dialog.setOnUpdateListener(attribute -> {
                 data.set(position, attribute);

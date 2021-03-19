@@ -8,6 +8,8 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.tyron.layouteditor.models.Attribute;
+
 public class Layout extends Value{
 	
 	@NonNull
@@ -41,18 +43,18 @@ public class Layout extends Value{
 		
 		return new Layout(type, attributes, data, extras);
 	}
-	public static class Attribute {
-		
-		public final int id;
-		public final Value value;
-		
-		public Attribute(int id, Value value) {
-			this.id = id;
-			this.value = value;
-		}
-		
-		protected Attribute copy() {
-			return new Attribute(id, value.copy());
-		}
-	}
+//	public static class Attribute {
+//
+//		public final int id;
+//		public final Value value;
+//
+//		public Attribute(int id, Value value) {
+//			this.id = id;
+//			this.value = value;
+//		}
+//
+//		protected Attribute copy() {
+//			return new Attribute(id, value.copy());
+//		}
+//	}
 }

@@ -2,6 +2,7 @@ package com.tyron.layouteditor;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,6 +20,8 @@ public class SimpleIdGenerator implements IdGenerator {
         }
     };
     private final HashMap<String, Integer> idMap = new HashMap<>();
+    private final HashMap<Integer, String> keyMap = new HashMap<>();
+
     private final AtomicInteger sNextGeneratedId;
 
     private static SimpleIdGenerator instance;
@@ -65,6 +68,7 @@ public class SimpleIdGenerator implements IdGenerator {
         if (existingId == null) {
             int newId = generateViewId();
             idMap.put(idKey, newId);
+            keyMap.put(newId, idKey);
             existingId = newId;
         }
         return existingId;
@@ -72,6 +76,15 @@ public class SimpleIdGenerator implements IdGenerator {
 
     public synchronized boolean keyExists(String key){
         return idMap.containsKey(key);
+    }
+
+    public synchronized String getString(Integer id){
+        try{
+            return keyMap.get(id);
+        }catch(Exception e){
+            Log.e("LayoutEditor", "Id doesn't exist: " + id);
+        }
+        return "";
     }
     /**
      * Taken from Android View Source code API 17+
