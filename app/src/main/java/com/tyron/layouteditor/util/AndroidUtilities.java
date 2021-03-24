@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.tyron.layouteditor.ApplicationLoader;
 import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
 
@@ -77,6 +78,22 @@ public class AndroidUtilities {
 			context = ((ContextWrapper)context).getBaseContext();
 		}
 		return null;
+	}
+	
+	public static void runOnUIThread(Runnable runnable) {
+		runOnUIThread(runnable, 0);
+	}
+	
+	public static void runOnUIThread(Runnable runnable, long delay) {
+		if (delay == 0) {
+			ApplicationLoader.applicationHandler.post(runnable);
+		} else {
+			ApplicationLoader.applicationHandler.postDelayed(runnable, delay);
+		}
+	}
+	
+	public static void cancelRunOnUIThread(Runnable runnable) {
+		ApplicationLoader.applicationHandler.removeCallbacks(runnable);
 	}
 
 

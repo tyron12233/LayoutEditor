@@ -1,12 +1,7 @@
 package com.tyron.layouteditor.editor;
 
-import android.animation.LayoutTransition;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathEffect;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -16,22 +11,22 @@ import com.tyron.layouteditor.WidgetFactory;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
-import com.tyron.layouteditor.parser.ViewLayoutInflater;
+import com.tyron.layouteditor.util.AndroidUtilities;
 
-import org.w3c.dom.Node;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-
-public class EditorView extends LinearLayout {
+public class EditorView extends LinearLayout{
 
 	private final EditorContext editorContext;
+
+	/**
+	 * The view that represents the shadow
+	 */
+	private View shadow;
 	private LinearLayoutItem root;
 	
 	public EditorView(Context context){
 		super(context);
-		editorContext = new EditorContext(getContext(), new WidgetFactory(this));
+		editorContext = new EditorContext(context, new WidgetFactory(this));
+		shadow = new View(context);
 		init();
 	}
 
@@ -49,20 +44,71 @@ public class EditorView extends LinearLayout {
 		root = new LinearLayoutItem(editorContext);
 		root.setRoot(true);
 		root.setOrientation(VERTICAL);
+		root.setOnDragListener(dragListener);
 		addView(root, new LayoutParams(-1,-1));
 
-//		View testView = null;
-//		try {
-//			testView = ViewLayoutInflater.inflate(editorContext, getContext().getAssets().open("test/test.xml"), this);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		shadow = new View(getContext());
+		shadow.setBackgroundColor(0x52000000);
+		shadow.setLayoutParams(new ViewGroup.LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
+		shadow.setMinimumWidth(AndroidUtilities.dp(50));
+		shadow.setMinimumHeight(AndroidUtilities.dp(50));
+	}
 
-		//addView(testView);
-		
-//		LayoutTransition layoutTransition = new LayoutTransition();
-//		layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-//		layoutTransition.disableTransitionType(LayoutTransition.DISAPPEARING);
-//		root.setLayoutTransition(layoutTransition);
+	View.OnDragListener dragListener = new OnDragListener() {
+		@Override
+		public boolean onDrag(View v, DragEvent event) {
+
+			//don't allow dragging if it's not a ViewGroup
+			if (!(v instanceof ViewGroup)) {
+				return false;
+			}
+
+			ViewGroup hostView = (ViewGroup) v;
+
+			switch (event.getAction()) {
+				case DragEvent.ACTION_DROP: {
+					hostView.removeView(shadow);
+
+					Object object = event.getLocalState();
+
+					View view;
+
+					//if the object is a new one added by the user,
+					//it will be in a form of a view so no need to
+					//create a new one
+					if (object instanceof Widget) {
+						view = editorContext.getWidgetFactory().createWidget(editorContext, (Widget) object);
+					} else {
+						view = (View) object;
+					}
+
+					if (view.getParent() != null) {
+						((ViewGroup) view.getParent()).removeView(view);
+					}
+					hostView.addView(view);
+					//set this drag listener to the view
+					//so it can be dragged on too
+					view.setOnDragListener(this);
+					break;
+				}
+
+				//make sure that the shadow is removed
+				case DragEvent.ACTION_DRAG_ENDED:
+				case DragEvent.ACTION_DRAG_EXITED: {
+					hostView.removeView(shadow);
+					break;
+				}
+				case DragEvent.ACTION_DRAG_ENTERED: {
+					hostView.removeView(shadow);
+					hostView.addView(shadow);
+					break;
+				}
+			}
+			return true;
+		}
+	};
+
+	public WidgetFactory getWidgetFactory(){
+		return editorContext.getWidgetFactory();
 	}
 }

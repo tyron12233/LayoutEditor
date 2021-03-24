@@ -18,6 +18,7 @@ import com.tyron.layouteditor.editor.PropertiesView;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Primitive;
 
 import java.util.ArrayList;
@@ -48,53 +49,9 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
 
         LayoutTransition layoutTransition = new LayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        layoutTransition.setDuration(180L);
         layoutTransition.disableTransitionType(LayoutTransition.DISAPPEARING);
         setLayoutTransition(layoutTransition);
-    }
-
-
-    @Override
-    public boolean onDragEvent(DragEvent event) {
-        switch(event.getAction()){
-            case DragEvent.ACTION_DROP : {
-                removeView(shadow);
-                Object object = event.getLocalState();
-
-                View view;
-
-                if(object instanceof Widget){
-                    view = ((EditorContext)getContext()).getWidgetFactory().createWidget(getContext(), (Widget)object);
-                }else{
-                    view = (View) object;
-                }
-                final View finalView = view;
-                if(view.getParent() != null){
-                    ((ViewGroup)view.getParent()).removeView(view);
-                }
-                addView(view);
-                finalView.postDelayed(()-> {
-                    finalView.requestLayout();
-                    finalView.postInvalidate();
-                }, 150);
-                break;
-            }
-            case DragEvent.ACTION_DRAG_ENDED : {
-                removeView(shadow);
-                break;
-            }
-            case DragEvent.ACTION_DRAG_ENTERED : {
-                removeView(shadow);
-                addView(shadow);
-                break;
-            }
-            case DragEvent.ACTION_DRAG_EXITED : {
-                removeView(shadow);
-                break;
-            }
-        }
-        //((View)getParent()).requestLayout();
-        //((View)getParent()).postInvalidate();
-        return true;
     }
 
     @Override
@@ -106,7 +63,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
 
     @Override
     public void onClick(View v) {
-        PropertiesView d = new PropertiesView(this);
+        PropertiesView d = PropertiesView.newInstance(getAttributes(), getStringId());
         d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "null");
     }
 
@@ -125,6 +82,30 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
         attributes.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
         attributes.add(new Attribute(Attributes.View.Width, new Primitive(getLayoutParams().width)));
 
+        if(getParent() instanceof RelativeLayoutItem){
+            attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams)getLayoutParams()));
+        }
         return attributes;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getInstance().addObserver(this, NotificationCenter.didUpdateWidget);
+    }
+
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
+    }
+
+
+    @Override
+    public void didReceivedNotification(int id, Object... args){
+        if(id == NotificationCenter.didUpdateWidget && ((String)args[0]).equals(getStringId())){
+            update((ArrayList<Attribute>) args[1]);
+        }
     }
 }

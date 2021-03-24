@@ -22,11 +22,11 @@ import java.util.ArrayList;
 public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.ViewHolder> {
 
     private final ArrayList<Attribute> data;
-    private final BaseWidget widget;
+    private final String targetId;
 
-    public AttributesAdapter(BaseWidget widget, ArrayList<Attribute> data) {
+    public AttributesAdapter(String targetId, ArrayList<Attribute> data) {
         this.data = data;
-        this.widget = widget;
+        this.targetId = targetId;
     }
 
     @NonNull
@@ -44,11 +44,7 @@ public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.Vi
 		//TODO: add different dialogs for different types
 		holder.itemView.setOnClickListener((v) -> {
 			//Toast.makeText(v.getContext(), attr.value.getAsString(), Toast.LENGTH_LONG).show();
-            EditTextDialog dialog = new EditTextDialog(attr);
-            dialog.setOnUpdateListener(attribute -> {
-                data.set(position, attribute);
-                widget.update(data);
-            });
+            EditTextDialog dialog = EditTextDialog.newInstance(data, position, targetId);
             dialog.show(AndroidUtilities.getActivity(v.getContext()).getSupportFragmentManager(), "");
 		});
     }
