@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.values.Primitive;
 
 import java.util.ArrayList;
 
@@ -24,11 +25,11 @@ public class ViewManager {
 
             //ViewGroup LayoutParams
             switch (attr.key) {
-                case "layout_width":
+                case Attributes.View.Width:
                     view.setMinimumWidth(attr.value.getAsInt() >= 0 ? -1 : AndroidUtilities.dp(50));
                     params.width = (attr.value.getAsInt()) >= 0 ? AndroidUtilities.dp(attr.value.getAsInt()) : attr.value.getAsInt();
                     break;
-                case "layout_height":
+                case Attributes.View.Height:
                     params.height = (attr.value.getAsInt()) >= 0 ? AndroidUtilities.dp(attr.value.getAsInt()) : attr.value.getAsInt();
                     break;
             }
@@ -63,78 +64,77 @@ public class ViewManager {
     public static void applyRelativeLayoutParams(Attribute attr, View view, RelativeLayout.LayoutParams rParams) {
 
         IdGenerator idGenerator = SimpleIdGenerator.getInstance();
+        boolean layoutTarget = false;
+        int layoutRule = 100;
+
+        if(attr.value.isNull()){
+            attr.value = new Primitive(false);
+        }
         switch (attr.key) {
             case Attributes.View.ToLeftOf:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.LEFT_OF);
-                } else {
-                    rParams.addRule(RelativeLayout.LEFT_OF, idGenerator.getUnique(attr.value.getAsString()));
-                }
-
+                layoutRule = RelativeLayout.LEFT_OF;
+                layoutTarget = true;
                 break;
             case Attributes.View.ToRightOf:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.RIGHT_OF);
-                } else {
-                    rParams.addRule(RelativeLayout.RIGHT_OF, idGenerator.getUnique(attr.value.getAsString()));
-                }
+                layoutRule = RelativeLayout.RIGHT_OF;
+                layoutTarget = true;
                 break;
             case Attributes.View.Above:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.ABOVE);
-                } else {
-                    rParams.addRule(RelativeLayout.ABOVE, idGenerator.getUnique(attr.value.getAsString()));
-                }
+                layoutRule = RelativeLayout.ABOVE;
+                layoutTarget = true;
                 break;
             case Attributes.View.Below:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.BELOW);
-                } else {
-                    rParams.addRule(RelativeLayout.BELOW, idGenerator.getUnique(attr.value.getAsString()));
-                }
+                layoutRule = RelativeLayout.BELOW;
+                layoutTarget = true;
                 break;
             case Attributes.View.AlignBaseline:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.ALIGN_BASELINE);
-                } else {
-                    rParams.addRule(RelativeLayout.ALIGN_BASELINE, idGenerator.getUnique(attr.value.getAsString()));
-                }
+                layoutRule = RelativeLayout.ALIGN_BASELINE;
+                layoutTarget = true;
                 break;
             case Attributes.View.AlignLeft:
-                if (attr.value.isNull()) {
-                    rParams.removeRule(RelativeLayout.ALIGN_LEFT);
-                } else {
-                    rParams.addRule(RelativeLayout.ALIGN_LEFT, idGenerator.getUnique(attr.value.getAsString()));
-                }
+                layoutRule = RelativeLayout.ALIGN_LEFT;
+                layoutTarget = true;
                 break;
             case Attributes.View.AlignParentBottom:
-                if (!attr.value.isNull() && attr.value.getAsBoolean()) {
-                    rParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                } else {
-                    rParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                }
+                layoutRule = RelativeLayout.ALIGN_PARENT_BOTTOM;
                 break;
             case Attributes.View.AlignParentTop:
-                if (!attr.value.isNull() && attr.value.getAsBoolean()) {
-                    rParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                } else {
-                    rParams.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-                }
+                layoutRule = RelativeLayout.ALIGN_PARENT_TOP;
                 break;
+            case Attributes.View.AlignParentLeft:
             case Attributes.View.AlignParentStart:
-                if (!attr.value.isNull() && attr.value.getAsBoolean()) {
-                    rParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-                } else {
-                    rParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
-                }
+                layoutRule = RelativeLayout.ALIGN_PARENT_START;
                 break;
+            case Attributes.View.AlignParentRight:
             case Attributes.View.AlignParentEnd:
-                if (!attr.value.isNull() && attr.value.getAsBoolean()) {
-                    rParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-                } else {
-                    rParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
-                }
+                layoutRule = RelativeLayout.ALIGN_PARENT_END;
                 break;
+            case Attributes.View.CenterInParent:
+                layoutRule = RelativeLayout.CENTER_IN_PARENT;
+                break;
+            case Attributes.View.CenterHorizontal:
+                layoutRule = RelativeLayout.CENTER_HORIZONTAL;
+                break;
+            case Attributes.View.CenterVertical:
+                layoutRule = RelativeLayout.CENTER_VERTICAL;
+                break;
+
+        }
+        if(layoutRule != 100){
+            if(layoutTarget){
+                if(attr.value.isNull()){
+                    rParams.removeRule(layoutRule);
+                }else{
+                    int anchor = idGenerator.getUnique(attr.value.getAsString());
+                    rParams.addRule(layoutRule, anchor);
+                }
+            }else{
+                if(attr.value.isNull() || !attr.value.getAsBoolean()){
+                    rParams.removeRule(layoutRule);
+                }else{
+                    rParams.addRule(layoutRule);
+                }
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -85,6 +86,10 @@ public class SimpleIdGenerator implements IdGenerator {
             Log.e("LayoutEditor", "Id doesn't exist: " + id);
         }
         return "";
+    }
+
+    public synchronized ArrayList<String> getKeys(){
+        return new ArrayList<String>(idMap.keySet());
     }
     /**
      * Taken from Android View Source code API 17+

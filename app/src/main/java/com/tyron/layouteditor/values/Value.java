@@ -1,5 +1,11 @@
 package com.tyron.layouteditor.values;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import com.tyron.layouteditor.adapters.InterfaceAdapter;
+
 public abstract class Value {
 	
 	public abstract Value copy();
@@ -109,5 +115,11 @@ public abstract class Value {
 */
 	public char getAsCharacter() {
 		throw new UnsupportedOperationException(getClass().getSimpleName());
+	}
+	
+	public static Gson getGson(){
+		return new GsonBuilder()
+		.registerTypeAdapter(Value.class, new InterfaceAdapter<Value>())
+		.create();
 	}
 }

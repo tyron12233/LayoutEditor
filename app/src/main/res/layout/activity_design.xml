@@ -11,14 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+		android:paddingBottom="55dp"
         >
     </FrameLayout>
     <FrameLayout
         android:id="@+id/bottomsheet_layout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="#fe6262"
         android:paddingTop="4dp"
+        android:background="#ffffff"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:behavior_peekHeight="55dp"
         app:behavior_hideable="false">

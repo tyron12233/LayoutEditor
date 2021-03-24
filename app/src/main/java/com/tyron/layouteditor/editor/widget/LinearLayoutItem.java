@@ -2,19 +2,11 @@ package com.tyron.layouteditor.editor.widget;
 
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.DashPathEffect;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathEffect;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -22,45 +14,24 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.transition.ChangeBounds;
-import androidx.transition.TransitionSet;
-import androidx.transition.TransitionManager;
 
-import com.google.gson.Gson;
-import com.tyron.layouteditor.EditorContext;
-import com.tyron.layouteditor.IdGenerator;
 import com.tyron.layouteditor.SimpleIdGenerator;
-import com.tyron.layouteditor.ViewManager;
-import com.tyron.layouteditor.ViewSourceActivity;
 import com.tyron.layouteditor.WidgetFactory;
 import com.tyron.layouteditor.editor.PropertiesView;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.models.Attribute;
-import com.tyron.layouteditor.parser.ViewLayoutExporter;
-import com.tyron.layouteditor.parser.ViewLayoutInflater;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Layout;
-import com.tyron.layouteditor.values.Null;
-import com.tyron.layouteditor.values.ObjectValue;
 import com.tyron.layouteditor.values.Primitive;
-import com.tyron.layouteditor.values.Value;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 
 @SuppressLint("ViewConstructor")
-public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.OnLongClickListener, View.OnClickListener {
+public class LinearLayoutItem extends LinearLayout implements BaseWidget,
+        View.OnLongClickListener, View.OnClickListener{
 
     private View shadow;
     private WidgetFactory widgetFactory;
@@ -91,15 +62,9 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
         setOnLongClickListener(this);
         setOnClickListener(this);
         setBackgroundColor(0xffffffff);
-
-        shadow = new View(getContext());
-        shadow.setBackgroundColor(0x52000000);
-        shadow.setLayoutParams(new LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
-        shadow.setMinimumWidth(AndroidUtilities.dp(50));
-        shadow.setMinimumHeight(AndroidUtilities.dp(50));
 		
 		GradientDrawable gd = new GradientDrawable();
-		gd.setStroke(AndroidUtilities.dp(2), 0xfffe6262);
+		gd.setStroke(AndroidUtilities.dp(1), 0xfffe6262);
 		setBackground(gd);
 
         LayoutTransition layoutTransition = new LayoutTransition();
@@ -109,47 +74,6 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
         setLayoutTransition(layoutTransition);
         setAnimationCacheEnabled(true);
 
-    }
-
-    @Override
-    public boolean onDragEvent(DragEvent event) {
-        switch(event.getAction()){
-            case DragEvent.ACTION_DROP : {
-                removeView(shadow);
-                Object object = event.getLocalState();
-
-                View view;
-
-                if(object instanceof Widget){
-                    view = ((EditorContext)getContext()).getWidgetFactory().createWidget(getContext(), (Widget)object);
-                }else{
-                    view = (View) object;
-                }
-
-                if(view.getParent() != null){
-                    ((ViewGroup)view.getParent()).removeView(view);
-                }
-                addView(view);
-
-                break;
-            }
-            case DragEvent.ACTION_DRAG_ENDED : {
-                removeView(shadow);
-                break;
-            }
-            case DragEvent.ACTION_DRAG_ENTERED : {
-                removeView(shadow);
-                addView(shadow);
-                break;
-            }
-            case DragEvent.ACTION_DRAG_EXITED : {
-                removeView(shadow);
-                break;
-            }
-        }
-		//((View)getParent()).requestLayout();
-		//((View)getParent()).postInvalidate();
-        return true;
     }
 
     Rect rect = new Rect();
@@ -184,16 +108,8 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
 
     @Override
     public void onClick(View v) {
-        final PropertiesView d = new PropertiesView(this);
+        final PropertiesView d = PropertiesView.newInstance(getAttributes(), getStringId());
         d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "null");
-//        try {
-//            String str = ViewLayoutExporter.inflate(this);
-//            Intent intent = new Intent(getContext(), ViewSourceActivity.class);
-//            intent.putExtra("source", str);
-//            getContext().startActivity(intent);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
         Toast.makeText(getContext(), SimpleIdGenerator.getInstance().getString(getId()), Toast.LENGTH_SHORT).show();
     }
@@ -220,44 +136,30 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget, View.O
 			arrayList.add(new Attribute(Attributes.View.Weight, new Primitive(((LinearLayout.LayoutParams)getLayoutParams()).weight)));
 		}
 
-        SimpleIdGenerator idGenerator = SimpleIdGenerator.getInstance();
-
 		if(getParent() instanceof RelativeLayoutItem){
-
-		    int[] rules = ((RelativeLayout.LayoutParams)getLayoutParams()).getRules();
-            //the index is the name of the rule and the actual value
-            //is the value of the rule
-		    for(int i = 0; i < rules.length; i++){
-		        int rule = rules[i];
-
-                switch(i){
-                    case RelativeLayout.LEFT_OF:
-                        arrayList.add(new Attribute(Attributes.View.ToLeftOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                        continue;
-                    case RelativeLayout.RIGHT_OF:
-                        arrayList.add(new Attribute(Attributes.View.ToRightOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                        continue;
-                    case RelativeLayout.ABOVE:
-                        arrayList.add(new Attribute(Attributes.View.Above, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                        continue;
-                    case RelativeLayout.BELOW:
-                        arrayList.add(new Attribute(Attributes.View.Below, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                        continue;
-                    case RelativeLayout.ALIGN_BASELINE:
-                        arrayList.add(new Attribute(Attributes.View.AlignBaseline, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
-                        continue;
-                    case RelativeLayout.ALIGN_LEFT:
-                        arrayList.add(new Attribute(Attributes.View.AlignLeft, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
-                        continue;
-                    case RelativeLayout.ALIGN_PARENT_BOTTOM:
-                        arrayList.add(new Attribute(Attributes.View.AlignParentBottom, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
-                        continue;
-                    case RelativeLayout.ALIGN_PARENT_TOP:
-                        arrayList.add(new Attribute(Attributes.View.AlignParentTop, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
-                        continue;
-                }
-            }
+		    arrayList.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams) getLayoutParams()));
         }
 	    return arrayList;
     }
+	
+	@Override
+	public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getInstance().addObserver(this, NotificationCenter.didUpdateWidget);
+    }
+	
+	
+	@Override
+	public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
+    }
+	
+
+	@Override
+	public void didReceivedNotification(int id, Object... args){
+		if(id == NotificationCenter.didUpdateWidget && ((String)args[0]).equals(getStringId())){
+            update((ArrayList<Attribute>) args[1]);
+		}
+	}
 }
