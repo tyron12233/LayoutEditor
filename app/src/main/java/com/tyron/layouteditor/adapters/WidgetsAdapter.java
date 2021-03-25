@@ -20,7 +20,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
     private final ArrayList<Widget> data;
     private final BottomSheetBehavior<View> behavior;
 
-    public WidgetsAdapter(ArrayList<Widget> data, BottomSheetBehavior<View> behavior){
+    public WidgetsAdapter(ArrayList<Widget> data, BottomSheetBehavior<View> behavior) {
         this.data = data;
         this.behavior = behavior;
     }
@@ -52,7 +52,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
 
             name = view.findViewById(R.id.layout_name);

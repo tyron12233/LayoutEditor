@@ -13,102 +13,102 @@ import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 
-public class EditorView extends LinearLayout{
+public class EditorView extends LinearLayout {
 
-	private final EditorContext editorContext;
+    private final EditorContext editorContext;
 
-	/**
-	 * The view that represents the shadow
-	 */
-	private View shadow;
-	private LinearLayoutItem root;
-	
-	public EditorView(Context context){
-		super(context);
-		editorContext = new EditorContext(context, new WidgetFactory(this));
-		shadow = new View(context);
-		init();
-	}
+    /**
+     * The view that represents the shadow
+     */
+    private View shadow;
 
+    View.OnDragListener dragListener = new OnDragListener() {
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
 
-	/**
-	 * @return returns the root layout of the editor
-	 */
-	public BaseWidget getRootEditorView(){
-		return root;
-	}
+            //don't allow dragging if it's not a ViewGroup
+            if (!(v instanceof ViewGroup)) {
+                return false;
+            }
 
-	private void init() {
-		setOrientation(VERTICAL);
+            ViewGroup hostView = (ViewGroup) v;
 
-		root = new LinearLayoutItem(editorContext);
-		root.setRoot(true);
-		root.setOrientation(VERTICAL);
-		root.setOnDragListener(dragListener);
-		addView(root, new LayoutParams(-1,-1));
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DROP: {
+                    hostView.removeView(shadow);
 
-		shadow = new View(getContext());
-		shadow.setBackgroundColor(0x52000000);
-		shadow.setLayoutParams(new ViewGroup.LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
-		shadow.setMinimumWidth(AndroidUtilities.dp(50));
-		shadow.setMinimumHeight(AndroidUtilities.dp(50));
-	}
+                    Object object = event.getLocalState();
 
-	View.OnDragListener dragListener = new OnDragListener() {
-		@Override
-		public boolean onDrag(View v, DragEvent event) {
+                    View view;
 
-			//don't allow dragging if it's not a ViewGroup
-			if (!(v instanceof ViewGroup)) {
-				return false;
-			}
+                    //if the object is a new one added by the user,
+                    //it will be in a form of a view so no need to
+                    //create a new one
+                    if (object instanceof Widget) {
+                        view = editorContext.getWidgetFactory().createWidget(editorContext, (Widget) object);
+                    } else {
+                        view = (View) object;
+                    }
 
-			ViewGroup hostView = (ViewGroup) v;
+                    if (view.getParent() != null) {
+                        ((ViewGroup) view.getParent()).removeView(view);
+                    }
+                    hostView.addView(view);
+                    //set this drag listener to the view
+                    //so it can be dragged on too
+                    view.setOnDragListener(this);
+                    break;
+                }
 
-			switch (event.getAction()) {
-				case DragEvent.ACTION_DROP: {
-					hostView.removeView(shadow);
+                //make sure that the shadow is removed
+                case DragEvent.ACTION_DRAG_ENDED:
+                case DragEvent.ACTION_DRAG_EXITED: {
+                    hostView.removeView(shadow);
+                    break;
+                }
+                case DragEvent.ACTION_DRAG_ENTERED: {
+                    hostView.removeView(shadow);
+                    hostView.addView(shadow);
+                    break;
+                }
+            }
+            return true;
+        }
+    };
 
-					Object object = event.getLocalState();
+    private LinearLayoutItem root;
 
-					View view;
+    public EditorView(Context context) {
+        super(context);
+        editorContext = new EditorContext(context, new WidgetFactory(this));
+        shadow = new View(context);
+        init();
+    }
 
-					//if the object is a new one added by the user,
-					//it will be in a form of a view so no need to
-					//create a new one
-					if (object instanceof Widget) {
-						view = editorContext.getWidgetFactory().createWidget(editorContext, (Widget) object);
-					} else {
-						view = (View) object;
-					}
+    /**
+     * @return returns the root layout of the editor
+     */
+    public BaseWidget getRootEditorView() {
+        return root;
+    }
 
-					if (view.getParent() != null) {
-						((ViewGroup) view.getParent()).removeView(view);
-					}
-					hostView.addView(view);
-					//set this drag listener to the view
-					//so it can be dragged on too
-					view.setOnDragListener(this);
-					break;
-				}
+    private void init() {
+        setOrientation(VERTICAL);
 
-				//make sure that the shadow is removed
-				case DragEvent.ACTION_DRAG_ENDED:
-				case DragEvent.ACTION_DRAG_EXITED: {
-					hostView.removeView(shadow);
-					break;
-				}
-				case DragEvent.ACTION_DRAG_ENTERED: {
-					hostView.removeView(shadow);
-					hostView.addView(shadow);
-					break;
-				}
-			}
-			return true;
-		}
-	};
+        root = new LinearLayoutItem(editorContext);
+        root.setRoot(true);
+        root.setOrientation(VERTICAL);
+        root.setOnDragListener(dragListener);
+        addView(root, new LayoutParams(-1, -1));
 
-	public WidgetFactory getWidgetFactory(){
-		return editorContext.getWidgetFactory();
-	}
+        shadow = new View(getContext());
+        shadow.setBackgroundColor(0x52000000);
+        shadow.setLayoutParams(new ViewGroup.LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
+        shadow.setMinimumWidth(AndroidUtilities.dp(50));
+        shadow.setMinimumHeight(AndroidUtilities.dp(50));
+    }
+
+    public WidgetFactory getWidgetFactory() {
+        return editorContext.getWidgetFactory();
+    }
 }
