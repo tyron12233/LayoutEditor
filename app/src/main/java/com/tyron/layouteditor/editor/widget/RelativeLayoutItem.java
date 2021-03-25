@@ -20,6 +20,7 @@ import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Dimension;
 
 import java.util.ArrayList;
 
@@ -79,12 +80,13 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
     public ArrayList<Attribute> getAttributes() {
         ArrayList<Attribute> attributes = new ArrayList<>();
 
-        attributes.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
-        attributes.add(new Attribute(Attributes.View.Width, new Primitive(getLayoutParams().width)));
+        attributes.add(new Attribute(Attributes.View.Height, Dimension.valueOf(getLayoutParams().height)));
+        attributes.add(new Attribute(Attributes.View.Width, Dimension.valueOf(getLayoutParams().width)));
 
         if(getParent() instanceof RelativeLayoutItem){
             attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams)getLayoutParams()));
         }
+		
         return attributes;
     }
 

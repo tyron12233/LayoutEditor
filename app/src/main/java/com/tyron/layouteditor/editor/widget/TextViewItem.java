@@ -34,6 +34,7 @@ public class TextViewItem extends TextView implements BaseWidget, View.OnClickLi
 	public ArrayList<Attribute> getAttributes(){
 		ArrayList<Attribute> attributes = new ArrayList<>();
 		attributes.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
+		attributes.add(new Attribute(Attributes.View.Width, new Primitive(getLayoutParams().width)));
 		attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
 
 		if(getParent() instanceof RelativeLayoutItem){

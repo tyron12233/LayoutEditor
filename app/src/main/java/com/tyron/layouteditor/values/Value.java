@@ -33,6 +33,10 @@ public abstract class Value {
 		return this instanceof Layout;
 	}
 	
+	public boolean isDimension() {
+		return this instanceof Dimension;
+	}
+	
 	public ObjectValue getAsObject() {
 		if (isObject()) {
 			return (ObjectValue) this;
@@ -45,6 +49,13 @@ public abstract class Value {
 			return (Layout) this;
 		}
 		throw new IllegalStateException("Not a Layout: " + this);
+	}
+	
+	public Dimension getAsDimension() {
+		if (isDimension()) {
+			return (Dimension) this;
+		}
+		throw new IllegalStateException("Not a dimension: " + this);
 	}
 	
 	public boolean getAsBoolean() {

@@ -22,11 +22,12 @@ public class Attributes {
     public static final int TYPE_BOOLEAN = 2;
     public static final int TYPE_STRING = 3;
     public static final int TYPE_LAYOUT_STRING = 4;
+	public static final int TYPE_DIMENSION = 5;
 
     static{
         types.put(View.Weight, TYPE_NUMBER);
-        types.put(View.Width, TYPE_NUMBER);
-        types.put(View.Height, TYPE_NUMBER);
+        types.put(View.Width, TYPE_DIMENSION);
+        types.put(View.Height, TYPE_DIMENSION);
 
         types.put(View.AlignParentBottom, TYPE_BOOLEAN);
         types.put(View.AlignParentTop, TYPE_BOOLEAN);

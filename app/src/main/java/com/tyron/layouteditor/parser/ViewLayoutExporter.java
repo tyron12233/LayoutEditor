@@ -41,7 +41,7 @@ public class ViewLayoutExporter {
             if(attr.value.isNull()){
                 continue;
             }
-            rootElement.setAttributeNS(ANDROID_NS, attr.key, attr.value.getAsString());
+            rootElement.setAttributeNS(ANDROID_NS, attr.key, attr.value.toString());
         }
         document.appendChild(rootElement);
 
@@ -72,7 +72,7 @@ public class ViewLayoutExporter {
                 if(attr.value.isNull()){
                     continue;
                 }
-                childElement.setAttributeNS(ANDROID_NS,  attr.key, attr.value.getAsString());
+                childElement.setAttributeNS(ANDROID_NS,  attr.key, attr.value.toString());
             }
             if(child instanceof ViewGroup){
                 serializeView((ViewGroup) child, childElement);

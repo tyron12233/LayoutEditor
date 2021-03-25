@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.tyron.layouteditor.toolbox.BiMap;
 import com.tyron.layouteditor.toolbox.HashBiMap;
-
+import com.tyron.layouteditor.util.AndroidUtilities;
 
 /**
  * <p>
@@ -93,7 +93,8 @@ public class Dimension extends Value {
         this.value = value;
         this.unit = unit;
     }
-
+	
+	
     /**
      * This function returns a {@code Dimension} object holding the
      * value extracted from the specified {@code String}
@@ -111,6 +112,16 @@ public class Dimension extends Value {
         }
         return d;
     }
+	
+	public static Dimension valueOf(int val){
+		if(val == -1){
+			return Dimension.valueOf("match_parent");
+		}else if (val == -2){
+		    return Dimension.valueOf("wrap_content");
+		}else{
+		    return new Dimension((float) AndroidUtilities.px(val), DIMENSION_UNIT_DP);
+		}
+	}
 
     public static float apply(String dimension, Context context) {
         return Dimension.valueOf(dimension).apply(context);

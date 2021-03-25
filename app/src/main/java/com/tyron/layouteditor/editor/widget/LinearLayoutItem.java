@@ -25,6 +25,7 @@ import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Dimension;
 
 import java.util.ArrayList;
 
@@ -128,8 +129,8 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
     public ArrayList<Attribute> getAttributes() {
         ArrayList<Attribute> arrayList = new ArrayList<>();
 
-        arrayList.add(new Attribute(Attributes.View.Width, new Primitive(getLayoutParams().width)));
-        arrayList.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
+        arrayList.add(new Attribute(Attributes.View.Width, Dimension.valueOf(getLayoutParams().width)));
+        arrayList.add(new Attribute(Attributes.View.Height, Dimension.valueOf(getLayoutParams().height)));
 	    arrayList.add(new Attribute( Attributes.LinearLayout.Orientation, new Primitive(getOrientation())));
 		
 		if(getParent() instanceof LinearLayoutItem){

@@ -24,8 +24,8 @@ public class ApplicationLoader extends Application {
 	public void onCreate() {
 		this.uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 		
-		Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
-			/*Intent intent = new Intent(getApplicationContext(), DebugActivity.class);
+		/*Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+			Intent intent = new Intent(getApplicationContext(), DebugActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
 			String error = getStackTrace(ex);
@@ -40,9 +40,9 @@ public class ApplicationLoader extends Application {
 
 			android.os.Process.killProcess(android.os.Process.myPid());
 			System.exit(2);
-			*/
+			
 			uncaughtExceptionHandler.uncaughtException(thread, ex);
-		});
+		});*/
 		super.onCreate();
 		
 		applicationContext = this;

@@ -68,6 +68,13 @@ public class AndroidUtilities {
 		}
 		return (int) Math.ceil(density * value);
 	}
+	
+	public static int px(int dp) {
+		if(dp == -1 || dp == -2){
+			return dp;
+		}
+        return (int) (dp / density);
+    }
 
 	public static AppCompatActivity getActivity(Context context) {
 

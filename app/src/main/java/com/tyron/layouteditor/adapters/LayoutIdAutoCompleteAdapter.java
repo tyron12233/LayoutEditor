@@ -57,7 +57,7 @@ public class LayoutIdAutoCompleteAdapter extends ArrayAdapter<String> {
     Filter nameFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            String str = ((Attribute) resultValue).key;
+            String str = ((String) resultValue);
             return str;
         }
 
