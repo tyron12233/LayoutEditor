@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, View.OnClickListener, View.OnLongClickListener {
 
-    private View shadow;
-
     public RelativeLayoutItem(Context context) {
         super(context);
         init();
@@ -38,14 +36,8 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
         setOnClickListener(this);
         setBackgroundColor(0xffffffff);
 
-        shadow = new View(getContext());
-        shadow.setBackgroundColor(0x52000000);
-        shadow.setLayoutParams(new LinearLayout.LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
-        shadow.setMinimumWidth(AndroidUtilities.dp(50));
-        shadow.setMinimumHeight(AndroidUtilities.dp(50));
-
         GradientDrawable gd = new GradientDrawable();
-        gd.setStroke(AndroidUtilities.dp(2), 0xfffe6262);
+        gd.setStroke(AndroidUtilities.dp(1), 0xfffe6262);
         setBackground(gd);
 
         LayoutTransition layoutTransition = new LayoutTransition();

@@ -47,6 +47,7 @@ public class Attributes {
         types.put(View.Below, TYPE_LAYOUT_STRING);
 
         types.put(TextView.Text, TYPE_STRING);
+        types.put(View.Id, TYPE_STRING);
     }
     public static class View {
 
@@ -247,7 +248,11 @@ public class Attributes {
      * @return returns the type of the attribute
      */
     public static int getType(String string){
-        return types.get(string);
+        Integer type = types.get(string);
+        if(type == null){
+            return TYPE_STRING;
+        }
+        return type;
     }
 
     /**
@@ -263,6 +268,7 @@ public class Attributes {
         //is the value of the rule
         for(int i = 0; i < rules.length; i++){
             int rule = rules[i];
+
 
             switch(i){
                 case RelativeLayout.LEFT_OF:

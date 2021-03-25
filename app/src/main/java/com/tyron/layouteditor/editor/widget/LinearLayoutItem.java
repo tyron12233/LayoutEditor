@@ -4,9 +4,11 @@ import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -19,6 +21,7 @@ import androidx.core.view.ViewCompat;
 import com.tyron.layouteditor.SimpleIdGenerator;
 import com.tyron.layouteditor.WidgetFactory;
 import com.tyron.layouteditor.editor.PropertiesView;
+import com.tyron.layouteditor.editor.handle.HandleView;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.AndroidUtilities;
@@ -75,33 +78,64 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
         setLayoutTransition(layoutTransition);
         setAnimationCacheEnabled(true);
 
+        for(int i = 0; i < handlePoints.length; i++){
+            handlePoints[i] = new Point();
+        }
+
     }
 
     Rect rect = new Rect();
+    Point[] handlePoints = new Point[4];
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
-      //  getLocalVisibleRect(rect);
-      //  canvas.drawRect(rect, backgroundPaint);
-//
-//        path.moveTo(rect.left, rect.top);
-//        path.lineTo(rect.right, rect.top);
-//        path.lineTo(rect.right, rect.bottom);
-//        path.lineTo(rect.left, rect.bottom);
-//        path.lineTo(rect.left, rect.top);
-//
-//        canvas.drawPath(path, backgroundPaint);
+        getLocalVisibleRect(rect);
+        handlePoints[0].x = rect.left;
+        handlePoints[0].y = rect.bottom / 2;
+
+        handlePoints[1].x = rect.right / 2;
+        handlePoints[1].y = rect.top;
+
+        handlePoints[2].x = rect.right;
+        handlePoints[2].y = rect.bottom / 2;
+
+        handlePoints[3].x = rect.right / 2;
+        handlePoints[3].y = rect.bottom;
+
+        //canvas.drawCircle(handlePoints[0].x, handlePoints[0].y, AndroidUtilities.dp(16), backgroundPaint);
+        //canvas.drawCircle(handlePoints[1].x, handlePoints[1].y, AndroidUtilities.dp(16), backgroundPaint);
+        //canvas.drawCircle(handlePoints[2].x, handlePoints[2].y, AndroidUtilities.dp(16), backgroundPaint);
+        //canvas.drawCircle(handlePoints[3].x, handlePoints[3].y, AndroidUtilities.dp(16), backgroundPaint);
+
     }
 
     public void setRoot(boolean val){
         isRoot = val;
     }
 
+    Point lastTouchedPoint = new Point();
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        lastTouchedPoint.x = (int) event.getX();
+        lastTouchedPoint.y = (int) event.getY();
+        return super.onTouchEvent(event);
+    }
     @Override
     public boolean onLongClick(View v) {
         if(isRoot) return false;
 
+        for(Point point : handlePoints){
+
+            int distance = ((point.x - lastTouchedPoint.x) * (point.x - lastTouchedPoint.x))
+                    + ((point.y - lastTouchedPoint.y) * (point.y - lastTouchedPoint.y));
+
+            if(distance < AndroidUtilities.dp(16)){
+                Toast.makeText(getContext(), "LONG PRESSED POOINT" + point, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        }
         ViewCompat.startDragAndDrop(this, null, new DragShadowBuilder(this), this, 0);
         ((ViewGroup)getParent()).removeView(this);
         return true;
@@ -109,6 +143,8 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
 
     @Override
     public void onClick(View v) {
+        if(isRoot) return;
+
         final PropertiesView d = PropertiesView.newInstance(getAttributes(), getStringId());
         d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "null");
 
@@ -121,9 +157,6 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
         return this;
     }
 
-    public Layout getLayout(){
-        return new Layout(Widget.LINEAR_LAYOUT, getAttributes(), null, null);
-    }
     @NonNull
     @Override
     public ArrayList<Attribute> getAttributes() {
