@@ -67,7 +67,7 @@ public class ViewManager {
         boolean layoutTarget = false;
         int layoutRule = 100;
 
-        if(attr.value.isNull()){
+        if (attr.value.isNull()) {
             attr.value = new Primitive(false);
         }
         switch (attr.key) {
@@ -120,18 +120,18 @@ public class ViewManager {
                 break;
 
         }
-        if(layoutRule != 100){
-            if(layoutTarget){
-                if(attr.value.isNull()){
+        if (layoutRule != 100) {
+            if (layoutTarget) {
+                if (attr.value.isNull()) {
                     rParams.removeRule(layoutRule);
-                }else{
+                } else {
                     int anchor = idGenerator.getUnique(attr.value.getAsString());
                     rParams.addRule(layoutRule, anchor);
                 }
-            }else{
-                if(attr.value.isNull() || !attr.value.getAsBoolean()){
+            } else {
+                if (attr.value.isNull() || !attr.value.getAsBoolean()) {
                     rParams.removeRule(layoutRule);
-                }else{
+                } else {
                     rParams.addRule(layoutRule);
                 }
             }

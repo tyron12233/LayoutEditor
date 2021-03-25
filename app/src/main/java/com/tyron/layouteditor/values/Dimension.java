@@ -173,5 +173,4 @@ public class Dimension extends Value {
         }
         return number;
     }
-
 }

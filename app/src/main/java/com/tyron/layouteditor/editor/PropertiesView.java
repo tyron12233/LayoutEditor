@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,69 +15,63 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.gson.reflect.TypeToken;
-
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.adapters.AttributesAdapter;
-import com.tyron.layouteditor.editor.widget.Attributes;
-import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.NotificationCenter;
-import com.tyron.layouteditor.values.Layout;
-import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Value;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PropertiesView extends BottomSheetDialogFragment implements NotificationCenter.NotificationCenterDelegate {
 
+    String targetId;
+
     private ArrayList<Attribute> attributes;
-    
+
     private AttributesAdapter adapter;
     private RecyclerView recyclerView;
 
-    String targetId;
-	
-	public static PropertiesView newInstance(ArrayList<Attribute> attributes, String id){
-		PropertiesView dialog = new PropertiesView();
-		
-		Bundle args = new Bundle();
-		String attrString = Value.getGson().toJson(attributes);
-		args.putString("attributes", attrString);
-		args.putString("id", id);
-		dialog.setArguments(args);
-		
-		return dialog;
-		
-	}
-    public PropertiesView(){
+    public PropertiesView() {
 
     }
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		
-		attributes = Value.getGson().fromJson(
-		getArguments().getString("attributes"),
-		new TypeToken<ArrayList<Attribute>>(){}.getType());
-		
-		targetId = getArguments().getString("id");
-	}
+
+    public static PropertiesView newInstance(ArrayList<Attribute> attributes, String id) {
+        PropertiesView dialog = new PropertiesView();
+
+        Bundle args = new Bundle();
+        String attrString = Value.getGson().toJson(attributes);
+        args.putString("attributes", attrString);
+        args.putString("id", id);
+        dialog.setArguments(args);
+
+        return dialog;
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        attributes = Value.getGson().fromJson(
+                getArguments().getString("attributes"),
+                new TypeToken<ArrayList<Attribute>>() {
+                }.getType());
+
+        targetId = getArguments().getString("id");
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.property_view, container, false);
-        
+
         adapter = new AttributesAdapter(targetId, attributes);
         recyclerView = view.findViewById(R.id.recyclerview_items);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(adapter);
 
-        
         return view;
     }
 
@@ -107,9 +100,9 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-        if(id == NotificationCenter.didUpdateWidget){
-
+        if (id == NotificationCenter.didUpdateWidget) {
             this.attributes = (ArrayList<Attribute>) args[1];
+            
             adapter.notifyDataSetChanged();
         }
     }

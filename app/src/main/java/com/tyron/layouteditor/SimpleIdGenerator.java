@@ -20,19 +20,11 @@ public class SimpleIdGenerator implements IdGenerator {
             return new SimpleIdGenerator[size];
         }
     };
+    private static SimpleIdGenerator instance;
     private final HashMap<String, Integer> idMap = new HashMap<>();
     private final HashMap<Integer, String> keyMap = new HashMap<>();
-
     private final AtomicInteger sNextGeneratedId;
 
-    private static SimpleIdGenerator instance;
-
-    public static SimpleIdGenerator getInstance(){
-        if(instance == null){
-            instance = new SimpleIdGenerator();
-        }
-        return instance;
-    }
     public SimpleIdGenerator() {
         sNextGeneratedId = new AtomicInteger(1);
     }
@@ -40,6 +32,13 @@ public class SimpleIdGenerator implements IdGenerator {
     public SimpleIdGenerator(Parcel source) {
         sNextGeneratedId = new AtomicInteger(source.readInt());
         source.readMap(idMap, null);
+    }
+
+    public static SimpleIdGenerator getInstance() {
+        if (instance == null) {
+            instance = new SimpleIdGenerator();
+        }
+        return instance;
     }
 
     /**
@@ -75,22 +74,23 @@ public class SimpleIdGenerator implements IdGenerator {
         return existingId;
     }
 
-    public synchronized boolean keyExists(String key){
+    public synchronized boolean keyExists(String key) {
         return idMap.containsKey(key);
     }
 
-    public synchronized String getString(Integer id){
-        try{
+    public synchronized String getString(Integer id) {
+        try {
             return keyMap.get(id);
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e("LayoutEditor", "Id doesn't exist: " + id);
         }
         return "";
     }
 
-    public synchronized ArrayList<String> getKeys(){
+    public synchronized ArrayList<String> getKeys() {
         return new ArrayList<String>(idMap.keySet());
     }
+
     /**
      * Taken from Android View Source code API 17+
      * <p/>
