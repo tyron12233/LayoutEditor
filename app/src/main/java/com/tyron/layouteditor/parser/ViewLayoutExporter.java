@@ -18,7 +18,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -36,16 +35,16 @@ public class ViewLayoutExporter {
         Document document = db.newDocument();
 
         Element rootElement = document.createElement(widget.getAsView().getClass().getSuperclass().getName());
-        for(Attribute attr : widget.getAttributes()) {
+        for (Attribute attr : widget.getAttributes()) {
             //skip empty attributes
-            if(attr.value.isNull()){
+            if (attr.value.isNull()) {
                 continue;
             }
             rootElement.setAttributeNS(ANDROID_NS, attr.key, attr.value.toString());
         }
         document.appendChild(rootElement);
 
-        serializeView((ViewGroup)widget.getAsView(), rootElement);
+        serializeView((ViewGroup) widget.getAsView(), rootElement);
 
         DOMSource source = new DOMSource(document);
         StringWriter writer = new StringWriter();
@@ -61,26 +60,27 @@ public class ViewLayoutExporter {
         return writer.toString();
     }
 
-    public static void serializeView(ViewGroup viewGroup, Element element){
+    public static void serializeView(ViewGroup viewGroup, Element element) {
 
-        for(int i = 0; i < viewGroup.getChildCount(); i++){
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View child = viewGroup.getChildAt(i);
 
             Element childElement = element.getOwnerDocument().createElement(child.getClass().getSuperclass().getName());
 
-            for(Attribute attr : ((BaseWidget)child).getAttributes()){
-                if(attr.value.isNull()){
+            for (Attribute attr : ((BaseWidget) child).getAttributes()) {
+                if (attr.value.isNull()) {
                     continue;
                 }
                 childElement.setAttributeNS(ANDROID_NS,  attr.key, attr.value.toString());
             }
-            if(child instanceof ViewGroup){
+            if (child instanceof ViewGroup) {
                 serializeView((ViewGroup) child, childElement);
             }
             element.appendChild(childElement);
         }
     }
-    public static Element createElement(Node node){
+
+    public static Element createElement(Node node) {
         return null;
     }
 
@@ -88,10 +88,10 @@ public class ViewLayoutExporter {
      * @param name name of the editor item
      * @return return the android equivalent of the widget
      */
-    public static String getAndroidWidgetName(String name){
-        if(name.equals(Widget.LINEAR_LAYOUT)){
+    public static String getAndroidWidgetName(String name) {
+        if (name.equals(Widget.LINEAR_LAYOUT)) {
             return "android.widget.LinearLayout";
-        }else if(name.equals(Widget.RELATIVE_LAYOUT)){
+        } else if (name.equals(Widget.RELATIVE_LAYOUT)) {
             return "android.widget.RelativeLayout";
         }
         return name;

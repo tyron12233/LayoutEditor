@@ -1,9 +1,9 @@
 package com.tyron.layouteditor.adapters;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
@@ -19,37 +19,6 @@ public class LayoutIdAutoCompleteAdapter extends ArrayAdapter<String> {
     Context context;
     int resource, textViewResourceId;
     List<String> items, tempItems, suggestions;
-
-    public LayoutIdAutoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
-        super(context, resource, textViewResourceId, items);
-        this.context = context;
-        this.resource = resource;
-        this.textViewResourceId = textViewResourceId;
-        this.items = items;
-        tempItems = new ArrayList<String>(items); // this makes the difference.
-        suggestions = new ArrayList<String>();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.autocomplete_item, parent, false);
-        }
-        String attr = items.get(position);
-        if (attr != null) {
-            TextView lblName = view.findViewById(R.id.lbl_name);
-            if (lblName != null)
-                lblName.setText(attr);
-        }
-        return view;
-    }
-
-    @Override
-    public Filter getFilter() {
-        return nameFilter;
-    }
 
     /**
      * Custom Filter implementation for custom suggestions we provide.
@@ -91,4 +60,35 @@ public class LayoutIdAutoCompleteAdapter extends ArrayAdapter<String> {
             }
         }
     };
+
+    public LayoutIdAutoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
+        super(context, resource, textViewResourceId, items);
+        this.context = context;
+        this.resource = resource;
+        this.textViewResourceId = textViewResourceId;
+        this.items = items;
+        tempItems = new ArrayList<>(items); // this makes the difference.
+        suggestions = new ArrayList<>();
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = convertView;
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.autocomplete_item, parent, false);
+        }
+        String attr = items.get(position);
+        if (attr != null) {
+            TextView lblName = view.findViewById(R.id.lbl_name);
+            if (lblName != null)
+                lblName.setText(attr);
+        }
+        return view;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return nameFilter;
+    }
 }

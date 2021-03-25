@@ -14,7 +14,7 @@ public class EditorContext extends ContextWrapper {
         this.widgetFactory = widgetFactory;
     }
 
-    public WidgetFactory getWidgetFactory(){
+    public WidgetFactory getWidgetFactory() {
         return widgetFactory;
     }
 

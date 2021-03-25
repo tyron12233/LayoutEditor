@@ -1,62 +1,47 @@
 package com.tyron.layouteditor.util;
 
-import androidx.annotation.UiThread;
-
 import android.os.SystemClock;
 import android.util.SparseArray;
+
+import androidx.annotation.UiThread;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.tyron.layouteditor.ApplicationLoader;
-
 public class NotificationCenter {
 
     private static int totalEvents = 1;
-	public static final int stopAllHeavyOperations = totalEvents++;
+    public static final int stopAllHeavyOperations = totalEvents++;
     public static final int startAllHeavyOperations = totalEvents++;
     public static final int didUpdateWidget = totalEvents++;
-	
+    private static volatile NotificationCenter[] Instance = new NotificationCenter[3];
+    private static volatile NotificationCenter globalInstance;
+    private final HashMap<Integer, AllowedNotifications> allowedNotifications = new HashMap<>();
+
+    HashSet<Integer> heavyOperationsCounter = new HashSet<>();
+
     private SparseArray<ArrayList<NotificationCenterDelegate>> observers = new SparseArray<>();
     private SparseArray<ArrayList<NotificationCenterDelegate>> removeAfterBroadcast = new SparseArray<>();
     private SparseArray<ArrayList<NotificationCenterDelegate>> addAfterBroadcast = new SparseArray<>();
+
     private ArrayList<DelayedPost> delayedPosts = new ArrayList<>(10);
-    private ArrayList<Runnable> delayedRunnables  = new ArrayList<>(10);
-    private ArrayList<Runnable> delayedRunnablesTmp  = new ArrayList<>(10);
+    private ArrayList<Runnable> delayedRunnables = new ArrayList<>(10);
+    private ArrayList<Runnable> delayedRunnablesTmp = new ArrayList<>(10);
     private ArrayList<DelayedPost> delayedPostsTmp = new ArrayList<>(10);
     private ArrayList<PostponeNotificationCallback> postponeCallbackList = new ArrayList<>(10);
 
     private Runnable checkForExpiredNotifications;
 
     private int broadcasting = 0;
-
     private int animationInProgressCount;
     private int animationInProgressPointer = 1;
-
-    HashSet<Integer> heavyOperationsCounter = new HashSet<>();
-
-    private final HashMap<Integer, AllowedNotifications> allowedNotifications = new HashMap<>();
-
-    public interface NotificationCenterDelegate {
-        void didReceivedNotification(int id, Object... args);
-    }
-
-    private static class DelayedPost {
-
-        private DelayedPost(int id, Object[] args) {
-            this.id = id;
-            this.args = args;
-        }
-
-        private int id;
-        private Object[] args;
-    }
-
     private int currentAccount;
     private int currentHeavyOperationFlags;
-    private static volatile NotificationCenter[] Instance = new NotificationCenter[3];
-    private static volatile NotificationCenter globalInstance;
+
+    public NotificationCenter(int account) {
+        currentAccount = account;
+    }
 
     @UiThread
     public static NotificationCenter getInstance(int num) {
@@ -71,11 +56,11 @@ public class NotificationCenter {
         }
         return localInstance;
     }
-	
-	@UiThread
-	public static NotificationCenter getInstance(){
-		return getGlobalInstance();
-	}
+
+    @UiThread
+    public static NotificationCenter getInstance() {
+        return getGlobalInstance();
+    }
 
     @UiThread
     public static NotificationCenter getGlobalInstance() {
@@ -89,10 +74,6 @@ public class NotificationCenter {
             }
         }
         return localInstance;
-    }
-
-    public NotificationCenter(int account) {
-        currentAccount = account;
     }
 
     public int setAnimationInProgress(int oldIndex, int[] allowedNotifications) {
@@ -382,10 +363,6 @@ public class NotificationCenter {
         }
     }
 
-    public interface PostponeNotificationCallback {
-        boolean needPostpone(int id, int currentAccount, Object[] args);
-    }
-
     public void doOnIdle(Runnable runnable) {
         if (isAnimationInProgress()) {
             delayedRunnables.add(runnable);
@@ -394,10 +371,28 @@ public class NotificationCenter {
         }
     }
 
+    public interface NotificationCenterDelegate {
+        void didReceivedNotification(int id, Object... args);
+    }
+
+    public interface PostponeNotificationCallback {
+        boolean needPostpone(int id, int currentAccount, Object[] args);
+    }
+
+    private static class DelayedPost {
+
+        private int id;
+        private Object[] args;
+        private DelayedPost(int id, Object[] args) {
+            this.id = id;
+            this.args = args;
+        }
+    }
+
     private static class AllowedNotifications {
 
-        int[] allowedIds;
         final long time;
+        int[] allowedIds;
 
         private AllowedNotifications() {
             time = SystemClock.elapsedRealtime();

@@ -3,7 +3,6 @@ package com.tyron.layouteditor.editor.widget;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -12,14 +11,10 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
-import com.tyron.layouteditor.EditorContext;
-import com.tyron.layouteditor.WidgetFactory;
 import com.tyron.layouteditor.editor.PropertiesView;
 import com.tyron.layouteditor.models.Attribute;
-import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
-import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Dimension;
 
 import java.util.ArrayList;
@@ -31,7 +26,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
         init();
     }
 
-    private void init(){
+    private void init() {
         setOnLongClickListener(this);
         setOnClickListener(this);
         setBackgroundColor(0xffffffff);
@@ -50,7 +45,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
     @Override
     public boolean onLongClick(View v) {
         ViewCompat.startDragAndDrop(this, null, new DragShadowBuilder(this), this, 0);
-        ((ViewGroup)getParent()).removeView(this);
+        ((ViewGroup) getParent()).removeView(this);
         return true;
     }
 
@@ -62,7 +57,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
 
 
     @Override
-    public View getAsView(){
+    public View getAsView() {
         return this;
     }
 
@@ -75,10 +70,10 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
         attributes.add(new Attribute(Attributes.View.Height, Dimension.valueOf(getLayoutParams().height)));
         attributes.add(new Attribute(Attributes.View.Width, Dimension.valueOf(getLayoutParams().width)));
 
-        if(getParent() instanceof RelativeLayoutItem){
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams)getLayoutParams()));
+        if (getParent() instanceof RelativeLayoutItem) {
+            attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams) getLayoutParams()));
         }
-		
+
         return attributes;
     }
 
@@ -97,8 +92,8 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget, Vi
 
 
     @Override
-    public void didReceivedNotification(int id, Object... args){
-        if(id == NotificationCenter.didUpdateWidget && ((String)args[0]).equals(getStringId())){
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == NotificationCenter.didUpdateWidget && ((String) args[0]).equals(getStringId())) {
             update((ArrayList<Attribute>) args[1]);
         }
     }
