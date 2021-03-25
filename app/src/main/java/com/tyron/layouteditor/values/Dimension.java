@@ -9,6 +9,8 @@ import com.tyron.layouteditor.toolbox.BiMap;
 import com.tyron.layouteditor.toolbox.HashBiMap;
 import com.tyron.layouteditor.util.AndroidUtilities;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * <p>
  * Dimension is a type of {@link Value} which hosts dimensions.
@@ -93,8 +95,8 @@ public class Dimension extends Value {
         this.value = value;
         this.unit = unit;
     }
-	
-	
+
+
     /**
      * This function returns a {@code Dimension} object holding the
      * value extracted from the specified {@code String}
@@ -112,19 +114,31 @@ public class Dimension extends Value {
         }
         return d;
     }
-	
-	public static Dimension valueOf(int val){
-		if(val == -1){
-			return Dimension.valueOf("match_parent");
-		}else if (val == -2){
-		    return Dimension.valueOf("wrap_content");
-		}else{
-		    return new Dimension((float) AndroidUtilities.px(val), DIMENSION_UNIT_DP);
-		}
-	}
+
+    public static Dimension valueOf(int val) {
+        if (val == -1) {
+            return Dimension.valueOf("match_parent");
+        } else if (val == -2) {
+            return Dimension.valueOf("wrap_content");
+        } else {
+            return new Dimension((float) AndroidUtilities.px(val), DIMENSION_UNIT_DP);
+        }
+    }
 
     public static float apply(String dimension, Context context) {
         return Dimension.valueOf(dimension).apply(context);
+    }
+
+    public static float parseFloat(String value) {
+        float number = 0;
+        if (null != value && value.length() > 0) {
+            try {
+                number = Float.parseFloat(value);
+            } catch (NumberFormatException e) {
+                number = 0;
+            }
+        }
+        return number;
     }
 
     public float apply(Context context) {
@@ -152,6 +166,7 @@ public class Dimension extends Value {
         return this;
     }
 
+    @NotNull
     @Override
     public String toString() {
         final String value;
@@ -171,17 +186,5 @@ public class Dimension extends Value {
 
     private static class DimensionCache {
         static final LruCache<String, Dimension> cache = new LruCache<>(64);
-    }
-
-    public static float parseFloat(String value) {
-        float number = 0;
-        if (null != value && value.length() > 0) {
-            try {
-                number = Float.parseFloat(value);
-            } catch (NumberFormatException e) {
-                number = 0;
-            }
-        }
-        return number;
     }
 }

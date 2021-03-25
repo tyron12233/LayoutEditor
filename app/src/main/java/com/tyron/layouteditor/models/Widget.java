@@ -15,6 +15,7 @@ public class Widget {
     public Widget(String clazz){
         this.clazz = clazz;
     }
+
     public void setClazz(String clazz){
         this.clazz = clazz;
     }

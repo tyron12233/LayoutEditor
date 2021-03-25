@@ -19,7 +19,7 @@ public class Attributes {
     public static final int TYPE_BOOLEAN = 2;
     public static final int TYPE_STRING = 3;
     public static final int TYPE_LAYOUT_STRING = 4;
-	public static final int TYPE_DIMENSION = 5;
+    public static final int TYPE_DIMENSION = 5;
 
     public static HashMap<String, Integer> types = new HashMap<>();
 

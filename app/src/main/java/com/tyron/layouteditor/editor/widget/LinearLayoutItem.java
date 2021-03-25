@@ -23,9 +23,9 @@ import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
+import com.tyron.layouteditor.values.Dimension;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.Primitive;
-import com.tyron.layouteditor.values.Dimension;
 
 import java.util.ArrayList;
 
@@ -35,11 +35,13 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
         View.OnLongClickListener, View.OnClickListener {
 
     private final Paint backgroundPaint = new Paint();
-    private View shadow;
-    private WidgetFactory widgetFactory;
-    private boolean isRoot = false;
 
     Rect rect = new Rect();
+
+    private View shadow;
+    private WidgetFactory widgetFactory;
+
+    private boolean isRoot = false;
 
     public LinearLayoutItem(Context context) {
         super(context);
@@ -131,14 +133,14 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget,
 
         arrayList.add(new Attribute(Attributes.View.Width, Dimension.valueOf(getLayoutParams().width)));
         arrayList.add(new Attribute(Attributes.View.Height, Dimension.valueOf(getLayoutParams().height)));
-	    arrayList.add(new Attribute( Attributes.LinearLayout.Orientation, new Primitive(getOrientation())));
-		
-		if(getParent() instanceof LinearLayoutItem){
-			arrayList.add(new Attribute(Attributes.View.Weight, new Primitive(((LinearLayout.LayoutParams)getLayoutParams()).weight)));
-		}
+        arrayList.add(new Attribute(Attributes.LinearLayout.Orientation, new Primitive(getOrientation())));
 
-		if(getParent() instanceof RelativeLayoutItem){
-		    arrayList.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams) getLayoutParams()));
+        if (getParent() instanceof LinearLayoutItem) {
+            arrayList.add(new Attribute(Attributes.View.Weight, new Primitive(((LinearLayout.LayoutParams) getLayoutParams()).weight)));
+        }
+
+        if (getParent() instanceof RelativeLayoutItem) {
+            arrayList.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams) getLayoutParams()));
         }
         return arrayList;
     }

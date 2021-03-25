@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.models.Attribute;
-import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.values.Primitive;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class ViewManager {
                     break;
                 case Attributes.View.Height:
                     params.height = (int) attr.value.getAsDimension().apply(view.getContext());
-					break;
+                    break;
             }
 
             if (params instanceof LinearLayout.LayoutParams) {
