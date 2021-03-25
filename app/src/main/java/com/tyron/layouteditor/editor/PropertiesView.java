@@ -22,6 +22,12 @@ import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 public class PropertiesView extends BottomSheetDialogFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -100,10 +106,15 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 
     @Override
     public void didReceivedNotification(int id, Object... args) {
-        if (id == NotificationCenter.didUpdateWidget) {
-            this.attributes = (ArrayList<Attribute>) args[1];
+        if(id == NotificationCenter.didUpdateWidget){
+
+            Set<Attribute> noDuplicates = new LinkedHashSet<>();
+			noDuplicates.addAll(attributes);
+            noDuplicates.addAll((Collection<? extends Attribute>) args[1]);
             
-            adapter.notifyDataSetChanged();
+			this.attributes.clear();
+			this.attributes.addAll(noDuplicates);
+		    adapter.notifyDataSetChanged();
         }
     }
 }

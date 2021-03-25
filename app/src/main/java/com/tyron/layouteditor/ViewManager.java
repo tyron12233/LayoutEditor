@@ -26,12 +26,12 @@ public class ViewManager {
             //ViewGroup LayoutParams
             switch (attr.key) {
                 case Attributes.View.Width:
-                    view.setMinimumWidth(attr.value.getAsInt() >= 0 ? -1 : AndroidUtilities.dp(50));
-                    params.width = (attr.value.getAsInt()) >= 0 ? AndroidUtilities.dp(attr.value.getAsInt()) : attr.value.getAsInt();
+                    //view.setMinimumWidth(attr.value.getAsInt() >= 0 ? -1 : AndroidUtilities.dp(50));
+                    params.width = (int) attr.value.getAsDimension().apply(view.getContext());
                     break;
                 case Attributes.View.Height:
-                    params.height = (attr.value.getAsInt()) >= 0 ? AndroidUtilities.dp(attr.value.getAsInt()) : attr.value.getAsInt();
-                    break;
+                    params.height = (int) attr.value.getAsDimension().apply(view.getContext());
+					break;
             }
 
             if (params instanceof LinearLayout.LayoutParams) {

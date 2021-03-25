@@ -21,29 +21,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 @SuppressLint("AppCompatCustomView")
-public class TextViewItem extends TextView implements BaseWidget, View.OnClickListener, View.OnLongClickListener {
+public class TextViewItem extends TextView implements BaseWidget, View.OnClickListener, View.OnLongClickListener{
+	
+	public TextViewItem(Context context){
+		super(context);
+		
+		setOnClickListener(this);
+	}
 
-    public TextViewItem(Context context) {
-        super(context);
+	@NotNull
+	@Override
+	public ArrayList<Attribute> getAttributes(){
+		ArrayList<Attribute> attributes = new ArrayList<>();
+		attributes.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
+		attributes.add(new Attribute(Attributes.View.Width, new Primitive(getLayoutParams().width)));
+		attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
 
-        setOnClickListener(this);
-    }
+		if(getParent() instanceof RelativeLayoutItem){
+			attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams)getLayoutParams()));
+		}
 
-    @NotNull
-    @Override
-    public ArrayList<Attribute> getAttributes() {
-        ArrayList<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(Attributes.View.Height, new Primitive(getLayoutParams().height)));
-        attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
-
-        if (getParent() instanceof RelativeLayoutItem) {
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes((RelativeLayout.LayoutParams) getLayoutParams()));
-        }
-
-        return attributes;
-    }
-
-    @Override
+		return attributes;
+	}
+	
+	@Override
     public void onClick(View v) {
         final PropertiesView dialog = PropertiesView.newInstance(getAttributes(), getStringId());
         dialog.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "");
