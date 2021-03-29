@@ -1,42 +1,37 @@
-package com.tyron.layouteditor;
-
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+package com.tyron.layouteditor.editor;
 
 import androidx.annotation.NonNull;
 
+import com.tyron.layouteditor.editor.Editor;
+import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.EditorView;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Widget;
-import com.tyron.layouteditor.util.AndroidUtilities;
-
-import java.lang.reflect.Constructor;
 
 public class WidgetFactory {
 
-    private final EditorView root;
+       private final EditorContext context;
+       private final EditorView editorView;
+       private final Editor editor;
 
-    public WidgetFactory(EditorView root) {
-        this.root = root;
+       public WidgetFactory(EditorContext context, Editor editor, EditorView editorView) {
+        this.context = context;
+        this.editor = editor;
+        this.editorView = editorView;
     }
 
     @NonNull
-    public <T extends BaseWidget> T createWidget(Context context, Widget widget) {
+    public <T extends BaseWidget> T createWidget(Widget widget) {
         try {
-            Class<T> clazz = (Class<T>) Class.forName(widget.getClazz());
-            Constructor<T> constructor = clazz.getConstructor(Context.class);
-
-            T view = constructor.newInstance(context);
-            setDefaultAttributes(view.getAsView(), widget);
+            
+            T view = (T) context.getInflater().inflate(widget.getLayout(editor, context, editorView), null);
             return view;
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid widget: " + widget.getClazz());
         }
     }
 
-    public void setDefaultAttributes(View view, Widget widget) {
+ /*   public void setDefaultAttributes(View view, Widget widget) {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(-2, -2);
         if (view instanceof ViewGroup) {
             params.width = -1;
@@ -54,5 +49,5 @@ public class WidgetFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

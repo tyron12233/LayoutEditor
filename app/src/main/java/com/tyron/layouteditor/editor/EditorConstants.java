@@ -1,4 +1,4 @@
-package com.tyron.layouteditor;
+package com.tyron.layouteditor.editor;
 
 import com.tyron.layouteditor.values.Primitive;
 
@@ -20,7 +20,7 @@ public class EditorConstants {
     public static final Primitive TRUE = new Primitive(true);
     public static final Primitive FALSE = new Primitive(false);
 
-    private static boolean isLoggingEnabled = false;
+    private static boolean isLoggingEnabled = true;
 
     public static void setIsLoggingEnabled(boolean isLoggingEnabled) {
         EditorConstants.isLoggingEnabled = isLoggingEnabled;
