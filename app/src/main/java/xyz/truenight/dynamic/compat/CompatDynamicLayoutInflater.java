@@ -21,8 +21,6 @@ import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.tyron.layouteditor.WidgetFactory;
-
 import java.util.List;
 
 import xyz.truenight.dynamic.AttributeApplier;
@@ -32,6 +30,7 @@ import xyz.truenight.dynamic.adapter.attr.TypedAttrAdapters;
 import xyz.truenight.dynamic.adapter.param.TypedParamAdapter;
 import xyz.truenight.dynamic.adapter.param.TypedParamAdapters;
 import xyz.truenight.dynamic.compat.adapter.attr.CompatImageViewAttrAdapter;
+import xyz.truenight.dynamic.compat.adapter.attr.CompatTextViewAttrAdapter;
 import xyz.truenight.utils.Utils;
 
 public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
@@ -49,7 +48,8 @@ public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
             COMPAT_IMAGE_VIEW_ADAPTER,
             TypedAttrAdapters.IMAGE_VIEW_ADAPTER,
             TypedAttrAdapters.LINEAR_LAYOUT_ADAPTER,
-            TypedAttrAdapters.RELATIVE_LAYOUT_ADAPTER
+            TypedAttrAdapters.RELATIVE_LAYOUT_ADAPTER,
+            new CompatTextViewAttrAdapter()
     );
 
     private static List<TypedParamAdapter> PARAM_DEFAULT = Utils.add(

@@ -5,7 +5,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.tyron.layouteditor.FunctionManager;
+import com.tyron.layouteditor.editor.FunctionManager;
 import com.tyron.layouteditor.values.AttributeResource;
 import com.tyron.layouteditor.values.ObjectValue;
 import com.tyron.layouteditor.values.Primitive;

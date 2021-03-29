@@ -10,31 +10,29 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.tyron.layouteditor.R;
-import com.tyron.layouteditor.SimpleIdGenerator;
+import com.tyron.layouteditor.editor.IdGenerator;
+import com.tyron.layouteditor.editor.SimpleIdGenerator;
 import com.tyron.layouteditor.adapters.AttributeAutoCompleteAdapter;
 import com.tyron.layouteditor.adapters.InterfaceAdapter;
 import com.tyron.layouteditor.adapters.LayoutIdAutoCompleteAdapter;
 import com.tyron.layouteditor.editor.widget.Attributes;
+import com.tyron.layouteditor.editor.widget.custom.TextInputAutoCompleteTextView;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.NotificationCenter;
-import com.tyron.layouteditor.values.Dimension;
-import com.tyron.layouteditor.values.Null;
-import com.tyron.layouteditor.values.Primitive;
-import com.tyron.layouteditor.values.Value;
+import com.tyron.layouteditor.values.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class EditTextDialog extends DialogFragment {
 
-    long delay = 800;
+    long delay = 200;
     long last_text_edit = 0;
     long last_value_edit = 0;
 
@@ -80,20 +78,21 @@ public class EditTextDialog extends DialogFragment {
 
     private ArrayList<Attribute> attributes;
 
+    private IdGenerator idGenerator;
     private int position;
 
     private TextInputLayout textInput_value;
     private TextInputLayout textInput_id;
 
-    private AppCompatAutoCompleteTextView editText;
-    private AppCompatAutoCompleteTextView editText_id;
+    private TextInputAutoCompleteTextView editText;
+    private TextInputAutoCompleteTextView editText_id;
 
     private final Runnable edittextRunnable = () -> {
         if (System.currentTimeMillis() > (last_text_edit + delay - 500)) {
             //if key is valid then we update the value depending on the key
             if (validateKey(editText_id.getText().toString())) {
 
-                editText.setText(attributes.get(attributes.indexOf(new Attribute(editText_id.getText().toString(), null))).value.getAsString());
+                editText.setText(attributes.get(attributes.indexOf(new Attribute(editText_id.getText().toString(), null))).value.toString());
 
             }
         }
@@ -114,7 +113,7 @@ public class EditTextDialog extends DialogFragment {
 
     public EditTextDialog() { }
 
-    public static EditTextDialog newInstance(ArrayList<Attribute> attributes, int position, String targetId) {
+    public static EditTextDialog newInstance(ArrayList<Attribute> attributes, int position, String targetId, IdGenerator idGenerator) {
 
         EditTextDialog dialog = new EditTextDialog();
 
@@ -123,6 +122,7 @@ public class EditTextDialog extends DialogFragment {
         args.putString("attributes", attrString);
         args.putInt("position", position);
         args.putString("id", targetId);
+		args.putParcelable("idGenerator", idGenerator);
         dialog.setArguments(args);
 
         return dialog;
@@ -137,6 +137,7 @@ public class EditTextDialog extends DialogFragment {
                 .registerTypeAdapter(Value.class, new InterfaceAdapter<Value>())
                 .create().fromJson(getArguments().getString("attributes"), new TypeToken<ArrayList<Attribute>>() {
                 }.getType());
+		idGenerator = getArguments().getParcelable("idGenerator");
     }
 
     @NonNull
@@ -201,6 +202,8 @@ public class EditTextDialog extends DialogFragment {
                     case Attributes.TYPE_STRING:
                         attribute.value = new Primitive(textValue);
                         break;
+					case Attributes.TYPE_DRAWABLE_STRING:
+					    attribute.value = DrawableValue.valueOf(textValue, EditTextDialog.this.getActivity());
                 }
                 attribute.key = editText_id.getText().toString();
                 setAttribute(attribute);
@@ -235,7 +238,9 @@ public class EditTextDialog extends DialogFragment {
 
         switch (Attributes.getType(key)) {
             case Attributes.TYPE_LAYOUT_STRING:
-                editText.setAdapter(new LayoutIdAutoCompleteAdapter(getActivity(), R.layout.edittext_dialog, R.id.lbl_name, SimpleIdGenerator.getInstance().getKeys()));
+                editText.setAdapter(new LayoutIdAutoCompleteAdapter(getActivity(), R.layout.edittext_dialog, R.id.lbl_name, ((SimpleIdGenerator)idGenerator).getKeys()));
+                break;
+            case Attributes.TYPE_NUMBER:
                 break;
             case Attributes.TYPE_BOOLEAN:
                 editText.setAdapter(new LayoutIdAutoCompleteAdapter(getActivity(), R.layout.edittext_dialog, R.id.lbl_name, new ArrayList<String>(Arrays.asList("true", "false"))));
@@ -261,7 +266,7 @@ public class EditTextDialog extends DialogFragment {
                 error = "Must be a boolean";
                 break;
             case Attributes.TYPE_LAYOUT_STRING:
-                result = SimpleIdGenerator.getInstance().keyExists(value);
+                result = idGenerator.keyExists(value);
                 error = "Must be a valid view id";
                 break;
             case Attributes.TYPE_DIMENSION:
@@ -269,6 +274,16 @@ public class EditTextDialog extends DialogFragment {
                         value.matches("[0-9]*(dp|px)");
                 error = "Invalid value";
                 break;
+			case Attributes.TYPE_STRING:
+			    result = true;
+				break;
+            case Attributes.TYPE_NUMBER:
+                result = true;
+                break;
+			case Attributes.TYPE_DRAWABLE_STRING:
+			    result = value.matches("#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}");
+				error = "Must be a valid color hex";
+				break;
         }
 
         if (!result) {

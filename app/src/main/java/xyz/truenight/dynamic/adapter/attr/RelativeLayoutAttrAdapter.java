@@ -19,12 +19,14 @@ package xyz.truenight.dynamic.adapter.attr;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.tyron.layouteditor.editor.widget.RelativeLayoutItem;
+
 import xyz.truenight.dynamic.AttrUtils;
 
 final class RelativeLayoutAttrAdapter implements TypedAttrAdapter {
     @Override
     public boolean isSuitable(View view) {
-        return view instanceof RelativeLayout;
+        return view instanceof RelativeLayoutItem;
     }
 
     @Override

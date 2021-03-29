@@ -1,4 +1,4 @@
-package com.tyron.layouteditor;
+package com.tyron.layouteditor.editor;
 
 import androidx.annotation.NonNull;
 

@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:id="@+id/drawerLayout"
     android:layout_height="match_parent"
-    tools:context=".DesignActivity" >
+    android:layout_width="match_parent"
+    tools:openDrawer="start"
+    >
 
-    <FrameLayout
-        android:id="@+id/editor_container"
-        android:layout_width="match_parent"
+    <include layout="@layout/include_design"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-		android:paddingBottom="55dp"
-        >
-    </FrameLayout>
-    <FrameLayout
-        android:id="@+id/bottomsheet_layout"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:paddingTop="4dp"
-        android:background="#ffffff"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="55dp"
-        app:behavior_hideable="false">
+        android:layout_width="match_parent" />
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_widgets"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:id="@+id/hierarchy_list"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
 
-    </FrameLayout>
+    </com.google.android.material.navigation.NavigationView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.drawerlayout.widget.DrawerLayout>

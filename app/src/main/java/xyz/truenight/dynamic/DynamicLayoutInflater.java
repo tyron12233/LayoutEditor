@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 
-import com.tyron.layouteditor.WidgetFactory;
+import com.tyron.layouteditor.editor.WidgetFactory;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

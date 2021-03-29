@@ -129,6 +129,7 @@ public class AndroidUtilities {
         }
         return count;
     }
+   
 
     public static LinearLayoutItem getRootView(View view) {
         if (view instanceof LinearLayoutItem && ((LinearLayoutItem) view).isRootView()) {

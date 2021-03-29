@@ -7,7 +7,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.tyron.layouteditor.EditorContext;
+import com.tyron.layouteditor.editor.EditorContext;
+import com.tyron.layouteditor.editor.EditorLayoutInflater;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.values.AttributeResource;
 import com.tyron.layouteditor.values.DrawableValue;
@@ -58,15 +59,15 @@ public abstract class DrawableResourceProcessor<V extends View> extends Attribut
             DrawableValue d = value.getAsDrawable();
             if (null != d) {
                 //TODO: APPLY DRAWABLES
-             /*   ProteusLayoutInflater.ImageLoader loader = ((BaseWidget) view).getViewManager().getContext().getLoader();
-                d.apply((BaseWidget) view, view.getContext(), loader, new DrawableValue.Callback() {
+                EditorLayoutInflater.ImageLoader loader = ((BaseWidget) view).getViewManager().getContext().getLoader();
+                d.apply((BaseWidget) view, loader, view.getContext(), new DrawableValue.Callback() {
                     @Override
                     public void apply(Drawable drawable) {
                         if (null != drawable) {
                             setDrawable(view, drawable);
                         }
                     }
-                });*/
+                });
             }
         } else {
             process(view, precompile(value, view.getContext(), ((EditorContext) view.getContext()).getFunctionManager()));

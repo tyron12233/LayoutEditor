@@ -18,7 +18,7 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 
-import com.tyron.layouteditor.EditorConstants;
+import com.tyron.layouteditor.editor.EditorConstants;
 import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Value;
 

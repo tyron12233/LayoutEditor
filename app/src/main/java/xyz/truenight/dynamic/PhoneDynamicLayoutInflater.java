@@ -20,9 +20,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.tyron.layouteditor.WidgetFactory;
-import com.tyron.layouteditor.models.Widget;
-
 public class PhoneDynamicLayoutInflater extends DynamicLayoutInflater {
     private static final String[] sClassPrefixList = {
             "android.widget.",
@@ -58,17 +55,17 @@ public class PhoneDynamicLayoutInflater extends DynamicLayoutInflater {
 
                 View view = null;
 
-                switch(name){
-                    case  "RelativeLayout":
-                        view = widgetFactory.createWidget(getContext(), new Widget(Widget.RELATIVE_LAYOUT));
-                        break;
-                    case "LinearLayout":
-                        view = widgetFactory.createWidget(getContext(), new Widget(Widget.LINEAR_LAYOUT));
-                        break;
-                    case "TextView":
-                        view = widgetFactory.createWidget(getContext(), new Widget(Widget.TEXTVIEW));
-                        break;
-                }
+//                switch(name){
+//                    case  "RelativeLayout":
+//                        view = widgetFactory.createWidget(new Widget("RelativeLayout")).getAsView();
+//                        break;
+//                    case "LinearLayout":
+//                        view = widgetFactory.createWidget(new Widget("LinearLayout")).getAsView();
+//                        break;
+//                    case "TextView":
+//                        view = widgetFactory.createWidget(new Widget("TextView")).getAsView();
+//                        break;
+//                }
                 if(view == null) {
                     view = createView(name, prefix, attrs);
                 }

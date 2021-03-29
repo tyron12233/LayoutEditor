@@ -1,4 +1,4 @@
-package com.tyron.layouteditor;
+package com.tyron.layouteditor.editor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -6,7 +6,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.tyron.layouteditor.EditorContext;
+import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.values.AttributeResource;
 import com.tyron.layouteditor.values.Dimension;

@@ -1,15 +1,19 @@
 package com.tyron.layouteditor.editor.widget;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.widget.RelativeLayout;
 
-import com.tyron.layouteditor.SimpleIdGenerator;
+import com.tyron.layouteditor.editor.EditorContext;
+import com.tyron.layouteditor.editor.IdGenerator;
 import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.values.Dimension;
+import com.tyron.layouteditor.values.DrawableValue;
 import com.tyron.layouteditor.values.Null;
 import com.tyron.layouteditor.values.Primitive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class that holds all the view attributes
@@ -21,6 +25,7 @@ public class Attributes {
     public static final int TYPE_NUMBER = 1;
     public static final int TYPE_BOOLEAN = 2;
     public static final int TYPE_STRING = 3;
+	public static final int TYPE_DRAWABLE_STRING = 6;
     public static final int TYPE_LAYOUT_STRING = 4;
 	public static final int TYPE_DIMENSION = 5;
 
@@ -28,6 +33,8 @@ public class Attributes {
         types.put(View.Weight, TYPE_NUMBER);
         types.put(View.Width, TYPE_DIMENSION);
         types.put(View.Height, TYPE_DIMENSION);
+
+        types.put(LinearLayout.Orientation, TYPE_NUMBER);
 
         types.put(View.AlignParentBottom, TYPE_BOOLEAN);
         types.put(View.AlignParentTop, TYPE_BOOLEAN);
@@ -47,6 +54,8 @@ public class Attributes {
         types.put(View.Below, TYPE_LAYOUT_STRING);
 
         types.put(TextView.Text, TYPE_STRING);
+		types.put(View.Background, TYPE_DRAWABLE_STRING);
+		types.put(View.Id, TYPE_STRING);
     }
     public static class View {
 
@@ -247,23 +256,51 @@ public class Attributes {
      * @return returns the type of the attribute
      */
     public static int getType(String string){
-        return types.get(string);
+        Integer type = types.get(string);
+		return type == null ? 0 : type;
     }
+	
+	public static ArrayList<Attribute> getViewAttributes(BaseWidget widget){
+
+        EditorContext context = widget.getViewManager().getContext();
+		ArrayList<Attribute> attrs = new ArrayList<>();
+		android.view.ViewGroup.LayoutParams params = widget.getAsView().getLayoutParams();
+
+		attrs.add(new Attribute(View.Width, Dimension.valueOf(params.width)));
+		attrs.add(new Attribute(View.Height, Dimension.valueOf(params.height)));
+
+		//get the background of a view if it's a Color, then we set it as a String
+        Drawable drawable = widget.getAsView().getBackground();
+
+        if(drawable == null){
+            attrs.add(new Attribute(View.Background, DrawableValue.valueOf("#00FFFFFF", context)));
+        }else if(drawable instanceof ColorDrawable){
+            int color = ((ColorDrawable) drawable).getColor();
+            String colorHex = String.format("#%06X", (0xFFFFFF & color));
+            attrs.add(new Attribute(View.Background, DrawableValue.valueOf(colorHex, context )));
+        }
+
+        //TODO: HANDLE OBJECT VALUE FOR @drawable
+
+        attrs.add(new Attribute(View.Id, new Primitive(context.getInflater().getIdGenerator().getString(widget.getAsView().getId()))));
+		
+		return attrs;
+	}
 
     /**
      * @return returns the attributes of a child view with a parent of RelativeLayout
      */
-    public static ArrayList<Attribute> getRelativeLayoutChildAttributes(RelativeLayout.LayoutParams params){
+    public static ArrayList<Attribute> getRelativeLayoutChildAttributes(RelativeLayout.LayoutParams params, IdGenerator idGenerator){
 
         ArrayList<Attribute> arrayList = new ArrayList<>();
-        SimpleIdGenerator idGenerator = SimpleIdGenerator.getInstance();
+       // SimpleIdGenerator idGenerator = SimpleIdGenerator.getInstance();
 
         int[] rules = params.getRules();
         //the index is the name of the rule and the actual value
         //is the value of the rule
         for(int i = 0; i < rules.length; i++){
             int rule = rules[i];
-
+            
             switch(i){
                 case RelativeLayout.LEFT_OF:
                     arrayList.add(new Attribute(Attributes.View.ToLeftOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));

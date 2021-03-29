@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Layout Editor</string>
+    <string name="nav_app_bar_close_drawer_description">Close drawer</string>
+    <string name="nav_app_bar_open_drawer_description">Open drawer</string>
 </resources>

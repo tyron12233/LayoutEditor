@@ -21,12 +21,14 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tyron.layouteditor.editor.widget.TextViewItem;
+
 import xyz.truenight.dynamic.AttrUtils;
 
 final class TextViewAttrAdapter implements TypedAttrAdapter<TextView> {
     @Override
     public boolean isSuitable(View view) {
-        return view instanceof TextView;
+        return view instanceof TextViewItem;
     }
 
     @Override

@@ -19,7 +19,7 @@
 			android:layout_marginLeft="8dp"
 			android:layout_marginRight="8dp"
 			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-			<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+			<com.tyron.layouteditor.editor.widget.custom.TextInputAutoCompleteTextView
 				android:id="@+id/edittext_id"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
 			android:layout_marginRight="8dp"
 			android:layout_weight="3"
 			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-			<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+			<com.tyron.layouteditor.editor.widget.custom.TextInputAutoCompleteTextView
 				android:id="@+id/edittext_value"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

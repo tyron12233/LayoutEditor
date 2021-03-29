@@ -12,6 +12,18 @@ import androidx.annotation.Nullable;
  * @author aditya.sharat
  */
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import androidx.annotation.Nullable;
+
+/**
+ * ObjectValue
+ *
+ * @author aditya.sharat
+ */
+
 public class ObjectValue extends Value {
 
 	private final HashMap<String, Value> members = new HashMap<>();
@@ -168,6 +180,9 @@ public class ObjectValue extends Value {
 		return has(memberName) && get(memberName).isLayout();
 	}
 
+	public boolean isBinding(String memberName) {
+		return has(memberName) && get(memberName).isBinding();
+	}
 
 	/**
 	 * Returns the member with the specified name.
@@ -300,6 +315,14 @@ public class ObjectValue extends Value {
 	public Layout getAsLayout(String memberName) {
 		if (isLayout(memberName)) {
 			return (Layout) members.get(memberName);
+		}
+		return null;
+	}
+
+	@Nullable
+	public Binding getAsBinding(String memberName) {
+		if (isBinding(memberName)) {
+			return (Binding) members.get(memberName);
 		}
 		return null;
 	}

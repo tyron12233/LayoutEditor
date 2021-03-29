@@ -18,6 +18,7 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
 
+import com.tyron.layouteditor.editor.EditorLayoutInflater;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.parser.ParseHelper;
 import com.tyron.layouteditor.processor.ColorResourceProcessor;
@@ -101,7 +102,7 @@ public abstract class DrawableValue extends Value {
         return new BitmapDrawable(context.getResources(), resizedBitmap);
     }
 
-    public abstract void apply(BaseWidget view, Context context, Callback callback);
+    public abstract void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, Callback callback);
 
     @Override
     public Value copy() {
@@ -131,7 +132,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget view, Context context, Callback callback) {
+        public void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, Callback callback) {
             Drawable drawable = new ColorDrawable(ColorResourceProcessor.evaluate(color, view).color);
             callback.apply(drawable);
         }
@@ -235,7 +236,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget  view, Context context,Callback callback) {
+        public void apply(BaseWidget  view, EditorLayoutInflater.ImageLoader loader, Context context,Callback callback) {
             GradientDrawable drawable = null != gradient ? gradient.init(view) : new GradientDrawable();
             if (-1 != shape) {
                 drawable.setShape(shape);
@@ -296,7 +297,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget view, Context context, Callback callback) {
+        public void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, Callback callback) {
             final Drawable[] drawables = new Drawable[layers.length];
             int index = 0;
             for (Value layer : layers) {
@@ -390,7 +391,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget view, Context context, Callback callback) {
+        public void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, Callback callback) {
             final StateListDrawable stateListDrawable = new StateListDrawable();
             int size = states.length;
             for (int i = 0; i < size; i++) {
@@ -431,7 +432,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget view, Context context,  Callback callback) {
+        public void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context,  Callback callback) {
             final LevelListDrawable levelListDrawable = new LevelListDrawable();
             for (Level level : levels) {
                 level.apply(view, levelListDrawable);
@@ -523,7 +524,7 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(BaseWidget view, Context context, Callback callback) {
+        public void apply(BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, Callback callback) {
             ColorStateList colorStateList;
             Drawable contentDrawable = null;
             Drawable maskDrawable = null;
@@ -585,8 +586,8 @@ public abstract class DrawableValue extends Value {
         }
 
         @Override
-        public void apply(final BaseWidget view, Context context, final Callback callback) {
-            /*loader.getBitmap(view, url, new AsyncCallback() {
+        public void apply(final BaseWidget view, EditorLayoutInflater.ImageLoader loader, Context context, final Callback callback) {
+            loader.getBitmap(view, url, new AsyncCallback() {
                 @Override
                 protected void apply(@NonNull Drawable drawable) {
                     callback.apply(drawable);
@@ -596,7 +597,7 @@ public abstract class DrawableValue extends Value {
                 protected void apply(@NonNull Bitmap bitmap) {
                     callback.apply(convertBitmapToDrawable(bitmap, view.getAsView().getContext()));
                 }
-            });*/
+            });
         }
     }
 

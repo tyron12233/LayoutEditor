@@ -49,10 +49,6 @@ import android.view.InflateException;
 import android.view.View;
 import android.view.ViewParent;
 
-import com.tyron.layouteditor.WidgetFactory;
-import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
-import com.tyron.layouteditor.editor.widget.TextViewItem;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -98,8 +94,8 @@ class CompatViewInflater implements DynamicLayoutInflater.Factory2 {
     public final View createView(View parent, final String name, @NonNull Context context, AttributeSet attrs, AttributeApplier attributeApplier) {
         final Context originalContext = context;
 
-        final boolean isPre21 = Build.VERSION.SDK_INT < 21;
-        final boolean inheritContext = isPre21 && shouldInheritContext((ViewParent) parent);
+        final boolean isPre21 = false;
+        final boolean inheritContext = false;
 
         // We can emulate Lollipop's android:theme attribute propagating down the view hierarchy
         // by using the parent's context
@@ -120,10 +116,7 @@ class CompatViewInflater implements DynamicLayoutInflater.Factory2 {
         // We need to 'inject' our tint aware Views in place of the standard framework versions
         switch (name) {
             case "TextView":
-                view = new TextViewItem(context);
-                break;
-            case "LinearLayout":
-                view = new LinearLayoutItem(context);
+                view = new AppCompatTextView(context);
                 break;
             case "ImageView":
                 view = new AppCompatImageView(context);

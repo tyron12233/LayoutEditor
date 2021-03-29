@@ -71,30 +71,16 @@ final class ViewAttrAdapter implements TypedAttrAdapter {
                         AttrUtils.getDimension(view.getContext(), value));
                 return true;
             case "android:paddingStart":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    view.setPaddingRelative(AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingTop(),
-                            view.getPaddingEnd(),
-                            view.getPaddingBottom());
-                } else {
-                    view.setPadding(AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingTop(),
-                            view.getPaddingRight(),
-                            view.getPaddingBottom());
-                }
+                view.setPaddingRelative(AttrUtils.getDimension(view.getContext(), value),
+                        view.getPaddingTop(),
+                        view.getPaddingEnd(),
+                        view.getPaddingBottom());
                 return true;
             case "android:paddingEnd":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    view.setPaddingRelative(view.getPaddingStart(),
-                            view.getPaddingTop(),
-                            AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingBottom());
-                } else {
-                    view.setPadding(view.getPaddingLeft(),
-                            view.getPaddingTop(),
-                            AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingBottom());
-                }
+                view.setPaddingRelative(view.getPaddingStart(),
+                        view.getPaddingTop(),
+                        AttrUtils.getDimension(view.getContext(), value),
+                        view.getPaddingBottom());
                 return true;
             case "android:background":
                 return setBackground(view, value);
