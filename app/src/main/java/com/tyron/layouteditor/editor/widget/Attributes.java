@@ -279,11 +279,11 @@ public class Attributes {
         Drawable drawable = widget.getAsView().getBackground();
 
         if(drawable == null){
-            attrs.add(new Attribute(View.Background, DrawableValue.valueOf("#00FFFFFF", context)));
+            attrs.add(new Attribute(View.Background, new Primitive("#00FFFFFF")));
         }else if(drawable instanceof ColorDrawable){
             int color = ((ColorDrawable) drawable).getColor();
             String colorHex = String.format("#%06X", (0xFFFFFF & color));
-            attrs.add(new Attribute(View.Background, DrawableValue.valueOf(colorHex, context )));
+            attrs.add(new Attribute(View.Background, new Primitive(colorHex)));
         }
 
         //TODO: HANDLE OBJECT VALUE FOR @drawable
