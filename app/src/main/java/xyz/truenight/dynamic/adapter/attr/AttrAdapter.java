@@ -18,6 +18,8 @@ package xyz.truenight.dynamic.adapter.attr;
 
 import android.view.View;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 public interface AttrAdapter<T extends View> {
     /**
      * Apply attribute to View
@@ -26,5 +28,5 @@ public interface AttrAdapter<T extends View> {
      * @param value attribute value
      * @return is attribute applied
      */
-    boolean apply(T view, String value);
+    boolean apply(EditorContext context, T view, String value);
 }

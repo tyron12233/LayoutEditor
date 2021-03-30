@@ -165,12 +165,14 @@ public class EditorView extends LinearLayout{
 		        }    
 		        
 		    }
-		        
-		    view.setOnLongClickListener(onLongClickListener);
-		    if(view instanceof  ViewGroup) {
-				view.setOnDragListener(dragListener);
+
+		    if(view instanceof BaseWidget) {
+				view.setOnLongClickListener(onLongClickListener);
+				if (view instanceof ViewGroup) {
+					view.setOnDragListener(dragListener);
+				}
+				view.setOnClickListener(onClickListener);
 			}
-		    view.setOnClickListener(onClickListener);
 		}
 		
 		

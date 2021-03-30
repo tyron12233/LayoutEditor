@@ -114,47 +114,47 @@ class CompatViewInflater implements DynamicLayoutInflater.Factory2 {
         View view = null;
 
         // We need to 'inject' our tint aware Views in place of the standard framework versions
-        switch (name) {
-            case "TextView":
-                view = new AppCompatTextView(context);
-                break;
-            case "ImageView":
-                view = new AppCompatImageView(context);
-                break;
-            case "Button":
-                view = new AppCompatButton(context);
-                break;
-            case "EditText":
-                view = new AppCompatEditText(context);
-                break;
-            case "Spinner":
-                view = new AppCompatSpinner(context);
-                break;
-            case "ImageButton":
-                view = new AppCompatImageButton(context);
-                break;
-            case "CheckBox":
-                view = new AppCompatCheckBox(context);
-                break;
-            case "RadioButton":
-                view = new AppCompatRadioButton(context);
-                break;
-            case "CheckedTextView":
-                view = new AppCompatCheckedTextView(context);
-                break;
-            case "AutoCompleteTextView":
-                view = new AppCompatAutoCompleteTextView(context);
-                break;
-            case "MultiAutoCompleteTextView":
-                view = new AppCompatMultiAutoCompleteTextView(context);
-                break;
-            case "RatingBar":
-                view = new AppCompatRatingBar(context);
-                break;
-            case "SeekBar":
-                view = new AppCompatSeekBar(context);
-                break;
-        }
+//        switch (name) {
+//            case "TextView":
+//                view = new AppCompatTextView(context);
+//                break;
+//            case "ImageView":
+//                view = new AppCompatImageView(context);
+//                break;
+//            case "Button":
+//                view = new AppCompatButton(context);
+//                break;
+//            case "EditText":
+//                view = new AppCompatEditText(context);
+//                break;
+//            case "Spinner":
+//                view = new AppCompatSpinner(context);
+//                break;
+//            case "ImageButton":
+//                view = new AppCompatImageButton(context);
+//                break;
+//            case "CheckBox":
+//                view = new AppCompatCheckBox(context);
+//                break;
+//            case "RadioButton":
+//                view = new AppCompatRadioButton(context);
+//                break;
+//            case "CheckedTextView":
+//                view = new AppCompatCheckedTextView(context);
+//                break;
+//            case "AutoCompleteTextView":
+//                view = new AppCompatAutoCompleteTextView(context);
+//                break;
+//            case "MultiAutoCompleteTextView":
+//                view = new AppCompatMultiAutoCompleteTextView(context);
+//                break;
+//            case "RatingBar":
+//                view = new AppCompatRatingBar(context);
+//                break;
+//            case "SeekBar":
+//                view = new AppCompatSeekBar(context);
+//                break;
+        //}
 
         if (view == null && originalContext != context) {
             // If the original context does not equal our themed context, then we need to manually

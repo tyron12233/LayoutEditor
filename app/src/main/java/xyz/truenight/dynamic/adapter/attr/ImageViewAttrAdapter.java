@@ -19,6 +19,8 @@ package xyz.truenight.dynamic.adapter.attr;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import xyz.truenight.dynamic.AttrUtils;
 
 final class ImageViewAttrAdapter implements TypedAttrAdapter {
@@ -28,7 +30,7 @@ final class ImageViewAttrAdapter implements TypedAttrAdapter {
     }
 
     @Override
-    public boolean apply(View v, String name, String value) {
+    public boolean apply(EditorContext context, View v, String name, String value) {
         ImageView view = (ImageView) v;
         switch (name) {
             case "android:src":

@@ -6,6 +6,12 @@ import android.view.View;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.tyron.layouteditor.editor.EditorContext;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.models.Attribute;
+
+import java.util.Arrays;
+
 import xyz.truenight.dynamic.AttrUtils;
 import xyz.truenight.dynamic.adapter.attr.TypedAttrAdapter;
 
@@ -16,7 +22,10 @@ public class CompatTextViewAttrAdapter implements TypedAttrAdapter<AppCompatText
     }
 
     @Override
-    public boolean apply(AppCompatTextView view, String name, String value) {
+    public boolean apply(EditorContext context, AppCompatTextView view, String name, String value) {
+        if(view instanceof BaseWidget){
+           // ((BaseWidget)view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, context.getEditorResources().get)));
+        }
         switch (name) {
             case "android:textSize":
                 view.setTextSize(TypedValue.COMPLEX_UNIT_PX, AttrUtils.getDimension(view.getContext(), value));

@@ -22,6 +22,8 @@ import android.view.InflateException;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -36,13 +38,16 @@ import xyz.truenight.utils.Utils;
 public final class AttributeApplier {
 
     private static final String TAG = AttributeApplier.class.getSimpleName();
-    public static final AttributeApplier DEFAULT = new AttributeApplier();
+    //public static final AttributeApplier DEFAULT = new AttributeApplier();
+
+    private EditorContext context;
 
     private List<TypedAttrAdapter> mTypedAttrAdapters;
 
     private List<TypedParamAdapter> mTypedParamAdapters;
 
-    public AttributeApplier() {
+    public AttributeApplier(EditorContext context) {
+        this.context = context;
         mTypedAttrAdapters = new ArrayList<>(TypedAttrAdapters.DEFAULT);
         mTypedParamAdapters = new ArrayList<>(TypedParamAdapters.DEFAULT);
     }
@@ -104,7 +109,7 @@ public final class AttributeApplier {
     @SuppressWarnings("unchecked")
     private boolean applyAttribute(List<TypedAttrAdapter> adapters, View view, String name, String value) {
         for (TypedAttrAdapter adapter : adapters) {
-            if (adapter.apply(view, name, value)) {
+            if (adapter.apply(context, view, name, value)) {
                 return true;
             }
         }

@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import java.util.List;
 
 import xyz.truenight.dynamic.AttributeApplier;
@@ -68,16 +70,16 @@ public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
      * Initializing of base {@link CompatDynamicLayoutInflater}
      * <p>
      * Can be used for setting params which will be copied
-     * to instances given by {@link CompatDynamicLayoutInflater#from(Context)}
+     * to instances given by {@link CompatDynamicLayoutInflater#from(EditorContext)}
      *
      * @param context Application context
      * @return Base inflater
      */
-    public static Builder base(Context context) {
+    public static Builder base(EditorContext context) {
         return new Builder(context);
     }
 
-    public static DynamicLayoutInflater from(Context context) {
+    public static DynamicLayoutInflater from(EditorContext context) {
         DynamicLayoutInflater unwrap = Utils.unwrap(DynamicLayoutInflater.mBase);
         if (unwrap == null) {
             // clone for factory unlock
@@ -89,18 +91,18 @@ public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
 
     /**
      * Instead of instantiating directly, you should retrieve an instance
-     * through {@link CompatDynamicLayoutInflater#from(Context)}
+     * through {@link CompatDynamicLayoutInflater#from(EditorContext)}
      *
      * @param context The Context in which to find resources and other
      *                application-specific things.
      */
-    protected CompatDynamicLayoutInflater(Context context) {
+    protected CompatDynamicLayoutInflater(EditorContext context) {
         super(context);
         setAttributeApplier(getDefaultApplier());
-        setFactory2(new CompatViewInflater());
+        //setFactory2(new CompatViewInflater());
     }
 
-    protected CompatDynamicLayoutInflater(DynamicLayoutInflater original, Context newContext) {
+    protected CompatDynamicLayoutInflater(DynamicLayoutInflater original, EditorContext newContext) {
         super(original, newContext);
     }
 
@@ -127,13 +129,13 @@ public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
         return super.onCreateView(name, attrs);
     }
 
-    public DynamicLayoutInflater cloneInContext(Context newContext) {
+    public DynamicLayoutInflater cloneInContext(EditorContext newContext) {
         return new CompatDynamicLayoutInflater(this, newContext);
     }
 
     public static class Builder extends DynamicLayoutInflater.Builder {
 
-        private Builder(Context context) {
+        private Builder(EditorContext context) {
             super(context);
         }
 
@@ -143,7 +145,7 @@ public class CompatDynamicLayoutInflater extends DynamicLayoutInflater {
         }
 
         @Override
-        protected DynamicLayoutInflater instance(Context context) {
+        protected DynamicLayoutInflater instance(EditorContext context) {
             return from(context);
         }
     }

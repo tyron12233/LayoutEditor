@@ -34,7 +34,7 @@ public class ViewManager implements BaseWidget.Manager {
     protected final DataContext dataContext;
 
     @NonNull
-    protected final ViewTypeParser parser;
+    public final ViewTypeParser parser;
 
     @Nullable
     protected final List<BoundAttribute> boundAttributes;
@@ -109,6 +109,11 @@ public class ViewManager implements BaseWidget.Manager {
     @Override
     public Object getExtras() {
         return this.extras;
+    }
+
+    @NonNull
+    public ViewTypeParser getParser() {
+        return parser;
     }
 
     @Override

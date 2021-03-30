@@ -52,6 +52,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import xyz.truenight.dynamic.DynamicLayoutInflater;
+import xyz.truenight.dynamic.EditorFactory;
 import xyz.truenight.dynamic.compat.CompatDynamicLayoutInflater;
 
 public class DesignActivity extends AppCompatActivity {
@@ -164,8 +165,10 @@ public class DesignActivity extends AppCompatActivity {
             }
         });
 
-        inflater = CompatDynamicLayoutInflater.base(this)
-                .setWidgetFactory(new WidgetFactory(editorView.getEditorContext(), editorView.getEditor(), editorView))
+        WidgetFactory factory = new WidgetFactory(editorView.getEditorContext(), editorView.getEditor(), editorView);
+        inflater = DynamicLayoutInflater.base(editorView.getEditorContext())
+                .setWidgetFactory(factory)
+                .setFactory2(new EditorFactory(factory))
                 .create();
 
     }
@@ -186,11 +189,15 @@ public class DesignActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
-        String savedLayout = saveLayout();
+        try {
+            String savedLayout = saveLayout();
 
-        if(savedLayout != null) {
-			savedInstanceState.putString("savedLayout", saveLayout());
-		}
+            if (savedLayout != null) {
+                savedInstanceState.putString("savedLayout", saveLayout());
+            }
+        }catch(Exception e){
+            //TODO: Handle unknown views
+        }
     }
 
     @Override
@@ -252,7 +259,7 @@ public class DesignActivity extends AppCompatActivity {
                 //inflate the xml
                 //remove all views from previous layout
                 editorView.removeAllViews();
-                DynamicLayoutInflater.from(this).inflate(content, editorView);
+                editorView.setViewListeners(DynamicLayoutInflater.from(editorView.getEditorContext()).inflate(content, editorView));
 
             } catch (FileNotFoundException e) {
                 Log.e("ACTIVITY RESULT", "File not found: " + returnUri);
@@ -266,7 +273,7 @@ public class DesignActivity extends AppCompatActivity {
     }
 
 
-    private String saveLayout() {
+    private String saveLayout() throws ClassCastException{
         BaseWidget rootWidget = editorView.getRootEditorView();
         if (rootWidget == null) {
             return null;
