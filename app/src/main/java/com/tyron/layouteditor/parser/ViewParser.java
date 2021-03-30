@@ -21,7 +21,7 @@ import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
-import com.tyron.layouteditor.editor.widget.ViewItem;
+import com.tyron.layouteditor.editor.widget.view.ViewItem;
 import com.tyron.layouteditor.processor.AttributeProcessor;
 import com.tyron.layouteditor.processor.BooleanAttributeProcessor;
 import com.tyron.layouteditor.processor.DimensionAttributeProcessor;

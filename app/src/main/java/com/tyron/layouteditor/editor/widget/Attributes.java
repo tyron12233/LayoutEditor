@@ -6,6 +6,7 @@ import android.widget.RelativeLayout;
 
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.IdGenerator;
+import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.values.Dimension;
 import com.tyron.layouteditor.values.DrawableValue;
@@ -33,8 +34,10 @@ public class Attributes {
         types.put(View.Weight, TYPE_NUMBER);
         types.put(View.Width, TYPE_DIMENSION);
         types.put(View.Height, TYPE_DIMENSION);
+        types.put(View.Elevation, TYPE_DIMENSION);
 
         types.put(LinearLayout.Orientation, TYPE_NUMBER);
+        types.put(ProgressBar.Max, TYPE_NUMBER);
 
         types.put(View.AlignParentBottom, TYPE_BOOLEAN);
         types.put(View.AlignParentTop, TYPE_BOOLEAN);
@@ -45,6 +48,8 @@ public class Attributes {
         types.put(View.CenterHorizontal, TYPE_BOOLEAN);
         types.put(View.CenterVertical, TYPE_BOOLEAN);
         types.put(View.CenterInParent, TYPE_BOOLEAN);
+        types.put(View.Enabled, TYPE_BOOLEAN);
+        types.put(ProgressBar.Indeterminate, TYPE_BOOLEAN);
 
         types.put(View.ToLeftOf, TYPE_LAYOUT_STRING);
         types.put(View.ToRightOf, TYPE_LAYOUT_STRING);
@@ -248,6 +253,7 @@ public class Attributes {
         public static final String Max = "android:max";
         public static final String ProgressTint = "android:progressTint";
         public static final String IndeterminateTint = "android:indeterminateTint";
+        public static final String Indeterminate = "android:indeterminate";
         public static final String SecondaryProgressTint = "android:secondaryProgressTint";
     }
 
@@ -290,10 +296,12 @@ public class Attributes {
     /**
      * @return returns the attributes of a child view with a parent of RelativeLayout
      */
-    public static ArrayList<Attribute> getRelativeLayoutChildAttributes(RelativeLayout.LayoutParams params, IdGenerator idGenerator){
+    public static ArrayList<Attribute> getRelativeLayoutChildAttributes(BaseWidget widget){
 
+        RelativeLayoutItem.LayoutParams params = (RelativeLayoutItem.LayoutParams) widget.getAsView().getLayoutParams();
+        IdGenerator idGenerator = widget.getViewManager().getContext().getInflater().getIdGenerator();
         ArrayList<Attribute> arrayList = new ArrayList<>();
-       // SimpleIdGenerator idGenerator = SimpleIdGenerator.getInstance();
+
 
         int[] rules = params.getRules();
         //the index is the name of the rule and the actual value

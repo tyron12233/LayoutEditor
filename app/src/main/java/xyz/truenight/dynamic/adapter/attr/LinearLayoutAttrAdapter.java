@@ -5,8 +5,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
-import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
-
 import xyz.truenight.dynamic.AttrUtils;
 
 final class LinearLayoutAttrAdapter implements TypedAttrAdapter<LinearLayout> {

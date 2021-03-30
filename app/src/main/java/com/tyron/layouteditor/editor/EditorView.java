@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.tyron.layouteditor.editor.widget.BaseWidget;
-import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
+import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.values.Layout;
@@ -18,7 +18,7 @@ public class EditorView extends LinearLayout{
 		
 		private final EditorContext editorContext;
 		private final EditorLayoutInflater layoutInflater;
-		private Editor editor;
+		private final Editor editor;
 		/**
       * The view that represents the shadow
       */
@@ -167,7 +167,9 @@ public class EditorView extends LinearLayout{
 		    }
 		        
 		    view.setOnLongClickListener(onLongClickListener);
-		    view.setOnDragListener(dragListener);
+		    if(view instanceof  ViewGroup) {
+				view.setOnDragListener(dragListener);
+			}
 		    view.setOnClickListener(onClickListener);
 		}
 		

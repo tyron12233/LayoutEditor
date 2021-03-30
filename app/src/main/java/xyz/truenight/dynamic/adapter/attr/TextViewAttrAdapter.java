@@ -21,7 +21,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tyron.layouteditor.editor.widget.TextViewItem;
+import com.tyron.layouteditor.editor.widget.view.TextViewItem;
 
 import xyz.truenight.dynamic.AttrUtils;
 

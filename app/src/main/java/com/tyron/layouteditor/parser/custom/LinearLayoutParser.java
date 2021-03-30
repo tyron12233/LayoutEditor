@@ -12,7 +12,7 @@ import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
-import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
+import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 import com.tyron.layouteditor.parser.ParseHelper;
 import com.tyron.layouteditor.processor.DimensionAttributeProcessor;
 import com.tyron.layouteditor.processor.DrawableResourceProcessor;

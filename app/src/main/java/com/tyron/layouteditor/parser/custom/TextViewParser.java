@@ -17,7 +17,7 @@ import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
-import com.tyron.layouteditor.editor.widget.TextViewItem;
+import com.tyron.layouteditor.editor.widget.view.TextViewItem;
 import com.tyron.layouteditor.parser.ParseHelper;
 import com.tyron.layouteditor.processor.BooleanAttributeProcessor;
 import com.tyron.layouteditor.processor.ColorResourceProcessor;

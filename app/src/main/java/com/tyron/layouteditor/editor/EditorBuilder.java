@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 
 import com.tyron.layouteditor.parser.IncludeParser;
 import com.tyron.layouteditor.parser.ViewParser;
+import com.tyron.layouteditor.parser.custom.ButtonParser;
 import com.tyron.layouteditor.parser.custom.EditTextParser;
+import com.tyron.layouteditor.parser.custom.FrameLayoutParser;
 import com.tyron.layouteditor.parser.custom.LinearLayoutParser;
+import com.tyron.layouteditor.parser.custom.ProgressBarParser;
 import com.tyron.layouteditor.parser.custom.RelativeLayoutParser;
 import com.tyron.layouteditor.parser.custom.TextViewParser;
 import com.tyron.layouteditor.parser.custom.ViewGroupParser;
@@ -29,18 +32,18 @@ public class EditorBuilder {
             builder.register(new ViewGroupParser());
             builder.register(new RelativeLayoutParser());
             builder.register(new LinearLayoutParser());
-//            builder.register(new FrameLayoutParser());
+            builder.register(new FrameLayoutParser());
 //            builder.register(new ScrollViewParser());
 //            builder.register(new HorizontalScrollViewParser());
 //            builder.register(new ImageViewParser());
             builder.register(new TextViewParser());
             builder.register(new EditTextParser());
-//            builder.register(new ButtonParser());
+            builder.register(new ButtonParser());
 //            builder.register(new ImageButtonParser());
 //            builder.register(new WebViewParser());
 //            builder.register(new RatingBarParser());
 //            builder.register(new CheckBoxParser());
-//            builder.register(new ProgressBarParser());
+            builder.register(new ProgressBarParser());
 //            builder.register(new HorizontalProgressBarParser());
 
             // register the default functions

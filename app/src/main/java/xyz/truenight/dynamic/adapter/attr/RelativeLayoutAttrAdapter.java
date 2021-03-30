@@ -19,7 +19,7 @@ package xyz.truenight.dynamic.adapter.attr;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.tyron.layouteditor.editor.widget.RelativeLayoutItem;
+import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
 
 import xyz.truenight.dynamic.AttrUtils;
 

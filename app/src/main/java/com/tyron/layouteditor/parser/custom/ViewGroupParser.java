@@ -12,7 +12,7 @@ import com.tyron.layouteditor.editor.EditorConstants;
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.EditorLayoutInflater;
 import com.tyron.layouteditor.editor.ViewTypeParser;
-import com.tyron.layouteditor.editor.widget.AspectRatioFrameLayoutItem;
+import com.tyron.layouteditor.editor.widget.viewgroup.AspectRatioFrameLayoutItem;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.managers.ViewGroupManager;

@@ -1,4 +1,4 @@
-package com.tyron.layouteditor.editor.widget;
+package com.tyron.layouteditor.editor.widget.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -8,11 +8,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 
 import java.util.ArrayList;
 
-public class ViewItem extends View implements BaseWidget{
+public class ViewItem extends View implements BaseWidget {
 
     Manager viewManager;
 

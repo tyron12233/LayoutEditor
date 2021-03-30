@@ -1,4 +1,4 @@
-package com.tyron.layouteditor.editor.widget;
+package com.tyron.layouteditor.editor.widget.viewgroup;
 
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
@@ -10,10 +10,11 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 
+import com.tyron.layouteditor.editor.widget.Attributes;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
@@ -133,7 +134,7 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget {
 		}
 
 		if(getParent() instanceof RelativeLayoutItem){
-		    arrayList.addAll(Attributes.getRelativeLayoutChildAttributes( (RelativeLayout.LayoutParams) getLayoutParams(), viewManager.getContext().getInflater().getIdGenerator()));
+		    arrayList.addAll(Attributes.getRelativeLayoutChildAttributes(this));
         }
 	    return arrayList;
     }

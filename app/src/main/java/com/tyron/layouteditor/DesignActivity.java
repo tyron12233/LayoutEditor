@@ -173,6 +173,10 @@ public class DesignActivity extends AppCompatActivity {
     private void populate() {
         widgets.add(new Widget(Widget.LINEAR_LAYOUT));
         widgets.add(new Widget(Widget.RELATIVE_LAYOUT));
+        widgets.add(new Widget(Widget.FRAME_LAYOUT));
+        widgets.add(new Widget(Widget.BUTTON));
+        widgets.add(new Widget(Widget.EDITTEXT));
+        widgets.add(new Widget(Widget.PROGRESSBAR));
         widgets.add(new Widget(Widget.TEXTVIEW));
 
         adapter.notifyDataSetChanged();

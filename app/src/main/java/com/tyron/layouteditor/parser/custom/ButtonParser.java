@@ -1,51 +1,47 @@
 package com.tyron.layouteditor.parser.custom;
 
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tyron.layouteditor.editor.EditorContext;
-import com.tyron.layouteditor.editor.ViewTypeParser;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
-import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
-import com.tyron.layouteditor.processor.GravityAttributeProcessor;
+import com.tyron.layouteditor.editor.widget.view.ButtonItem;
+import com.tyron.layouteditor.parser.ViewParser;
+import com.tyron.layouteditor.processor.StringAttributeProcessor;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.ObjectValue;
 
-/**
- * Created by kirankumar on 10/07/14.
- */
-public class RelativeLayoutParser<T extends RelativeLayout> extends ViewTypeParser<T> {
+public class ButtonParser<T extends Button> extends ViewParser<T> {
 
     @NonNull
     @Override
     public String getType() {
-        return "RelativeLayout";
+        return "Button";
     }
 
     @Nullable
     @Override
     public String getParentType() {
-        return "ViewGroup";
+        return "TextView";
     }
 
     @NonNull
     @Override
     public BaseWidget createView(@NonNull EditorContext context, @NonNull Layout layout, @NonNull ObjectValue data,
                                  @Nullable ViewGroup parent, int dataIndex) {
-        return new RelativeLayoutItem(context);
+        return new ButtonItem(context);
     }
 
     @Override
     protected void addAttributeProcessors() {
-
-        addAttributeProcessor(Attributes.View.Gravity, new GravityAttributeProcessor<T>() {
+        addAttributeProcessor(Attributes.TextView.Text, new StringAttributeProcessor<T>() {
             @Override
-            public void setGravity(T view, @Gravity int gravity) {
-                view.setGravity(gravity);
+            public void setString(T view, String value) {
+                view.setText(value);
             }
         });
     }

@@ -27,6 +27,11 @@ public class HierarchyViewBinder extends TreeViewBinder<HierarchyViewBinder.View
                 .getString(view.getId());
 
         holder.view_id.setText(id);
+
+        holder.itemView.setOnLongClickListener((v) -> {
+            view.performClick();
+            return true;
+        });
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tyron.layouteditor.editor.widget;
+package com.tyron.layouteditor.editor.widget.viewgroup;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.custom.AspectRatioFrameLayout;
 import com.tyron.layouteditor.models.Attribute;
 

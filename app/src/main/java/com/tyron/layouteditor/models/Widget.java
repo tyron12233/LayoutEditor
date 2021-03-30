@@ -16,11 +16,15 @@ import java.util.HashMap;
 
 public class Widget {
 		
-		public static String LINEAR_LAYOUT = "LinearLayout";
-		public static String RELATIVE_LAYOUT = "RelativeLayout";
-		
+		public static final String LINEAR_LAYOUT = "LinearLayout";
+		public static final String RELATIVE_LAYOUT = "RelativeLayout";
+		public static final String FRAME_LAYOUT = "FrameLayout";
+
 		public static final String TEXTVIEW = "TextView";
-		
+		public static final String EDITTEXT = "EditText";
+		public static final String BUTTON = "Button";
+		public static final String PROGRESSBAR = "ProgressBar";
+
 		private String clazz;
 		private HashMap<String, Object> attributes;
 		
@@ -70,7 +74,7 @@ public class Widget {
 				attributes.add(new Layout.Attribute(attributeI.id, valueI));
 			    }catch(Exception e){}
 				
-				if(clazz.equals(TEXTVIEW)){
+				if(clazz.equals(TEXTVIEW) || clazz.equals(BUTTON)){
 					ViewTypeParser.AttributeSet.Attribute attributeText = editor.getAttributeId(Attributes.TextView.Text, clazz);
 				    Value valueText = attributeText.processor.precompile(new Primitive("TextView"), context, context.getFunctionManager());
 				    attributes.add(new Layout.Attribute(attributeText.id, valueText));
