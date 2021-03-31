@@ -47,7 +47,7 @@ final class ViewAttrAdapter implements TypedAttrAdapter {
                 ViewTypeParser.AttributeSet.Attribute attribute = ((ViewManager) ((BaseWidget) view).getViewManager()).parser.getAttributeSet().getAttribute(name);
 
                 if(name.equals("android:id")){
-                    value = value.replace("@+id", "");
+                    value = value.replace("@+id/", "");
                 }
                 Value val = attribute.processor.precompile(new Primitive(value), view.getContext(), ((BaseWidget) view).getViewManager().getContext().getFunctionManager());
 
