@@ -10,6 +10,17 @@ import com.tyron.layouteditor.toolbox.tree.TreeNode;
 import com.tyron.layouteditor.toolbox.tree.TreeViewBinder;
 
 public class HierarchyViewBinder extends TreeViewBinder<HierarchyViewBinder.ViewHolder> {
+
+    private OnItemLongClickListener listener;
+
+    public interface OnItemLongClickListener{
+        void onItemLongClick(ViewHolder holder, int position, TreeNode<?> node);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener){
+        this.listener = listener;
+    }
+
     @Override
     public ViewHolder provideViewHolder(View itemView) {
         return new ViewHolder(itemView);
@@ -29,10 +40,13 @@ public class HierarchyViewBinder extends TreeViewBinder<HierarchyViewBinder.View
         holder.view_id.setText(id);
 
         holder.itemView.setOnLongClickListener((v) -> {
-            view.performClick();
+            if(listener != null){
+                listener.onItemLongClick(holder, position, n);
+            }
             return true;
         });
     }
+
 
     @Override
     public int getLayoutId() {

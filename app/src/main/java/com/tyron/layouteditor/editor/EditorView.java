@@ -45,7 +45,7 @@ public class EditorView extends LinearLayout {
 
             ViewGroup hostView = (ViewGroup) v;
 
-            if (v == EditorView.this && hostView.getChildCount() > 1) {
+            if (v instanceof EditorView && hostView.getChildCount() > 1) {
                 removeView(shadow);
                 return false;
             }
@@ -57,7 +57,7 @@ public class EditorView extends LinearLayout {
                 case DragEvent.ACTION_DROP: {
                     hostView.removeView(shadow);
 
-                    if (v == EditorView.this && hostView.getChildCount() >= 1) {
+                    if (v == EditorView.this && hostView.getChildCount() > 1) {
                         return false;
                     }
 
@@ -97,7 +97,15 @@ public class EditorView extends LinearLayout {
                 }
 
 				case DragEvent.ACTION_DRAG_LOCATION:
+                    if (hostView instanceof EditorView && hostView.getChildCount() > 1) {
+                        return false;
+                    }
                 case DragEvent.ACTION_DRAG_ENTERED: {
+
+                    if (hostView instanceof EditorView && hostView.getChildCount() > 1) {
+                        return false;
+                    }
+
                 	if(shadow.getParent() != null){
                 		int indexOfChild = hostView.indexOfChild(shadow);
 

@@ -208,7 +208,7 @@ public class EditTextDialog extends DialogFragment {
                 attribute.key = editText_id.getText().toString();
                 setAttribute(attribute);
                 NotificationCenter.getInstance().postNotificationName(NotificationCenter.didUpdateWidget, targetId, attributes);
-                dialog.dismiss();
+                dismiss();
             });
 
         }

@@ -3,16 +3,22 @@ package com.tyron.layouteditor.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.IdGenerator;
+import com.tyron.layouteditor.editor.dialog.ColorPickerDialog;
 import com.tyron.layouteditor.editor.dialog.EditTextDialog;
+import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.values.Color;
+import com.tyron.layouteditor.values.DrawableValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +50,24 @@ public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.Vi
 		//TODO: add different dialogs for different types
 		holder.itemView.setOnClickListener((v) -> {
 			//Toast.makeText(v.getContext(), attr.value.getAsString(), Toast.LENGTH_LONG).show();
-			EditTextDialog dialog = EditTextDialog.newInstance(data, position, targetId, idGenerator);
+//			EditTextDialog dialog = EditTextDialog.newInstance(data, position, targetId, idGenerator);
+//			dialog.show(AndroidUtilities.getActivity(v.getContext()).getSupportFragmentManager(), "");
+
+			String attributeName = attr.key;
+
+			DialogFragment dialog = null;
+
+			switch(Attributes.getType(attributeName)){
+				case Attributes.TYPE_COLOR:
+				case Attributes.TYPE_DRAWABLE_STRING:
+					if(Color.isColor(attr.value.toString())){
+						dialog = ColorPickerDialog.newInstance(attr, targetId);
+					}
+					break;
+				default:
+					dialog = EditTextDialog.newInstance(data, position, targetId, idGenerator);
+					break;
+			}
 			dialog.show(AndroidUtilities.getActivity(v.getContext()).getSupportFragmentManager(), "");
 		});
 	}

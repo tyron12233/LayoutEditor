@@ -128,11 +128,11 @@ public class ViewManager implements BaseWidget.Manager {
 		
 		for(Attribute attr : attrs) {
 			
-			int id = parser.getAttributeId(attr.key);
+			ViewTypeParser.AttributeSet.Attribute attribute = parser.getAttributeSet().getAttribute(attr.key);
 			Value value = attr.value;
-			attributeSet.add(new Layout.Attribute(id, value));
+			attributeSet.add(new Layout.Attribute(attribute.id, value));
 			
-			parser.handleAttribute(view, id, value);
+			parser.handleAttribute(view, attribute.id, value);
 			
 		}
 		

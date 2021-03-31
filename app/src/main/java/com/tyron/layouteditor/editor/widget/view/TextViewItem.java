@@ -2,6 +2,7 @@ package com.tyron.layouteditor.editor.widget.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,7 +34,9 @@ public class TextViewItem extends TextView implements BaseWidget {
 
         attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
 
-        attributes.add(new Attribute(Attributes.View.Id, new Primitive(viewManager.getContext().getInflater().getIdGenerator().getString(getId()))));
+        int textColor = getCurrentTextColor() - (16777215 + 1);
+
+        attributes.add(new Attribute(Attributes.TextView.TextColor, new Primitive(String.format("#%06X", (0xFFFFFF & textColor)))));
 
         if (getParent() instanceof RelativeLayoutItem) {
             attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));

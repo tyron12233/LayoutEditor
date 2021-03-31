@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +30,7 @@ import com.tyron.layouteditor.adapters.HierarchyViewBinder;
 import com.tyron.layouteditor.adapters.WidgetsAdapter;
 import com.tyron.layouteditor.editor.EditorView;
 import com.tyron.layouteditor.editor.WidgetFactory;
+import com.tyron.layouteditor.editor.dialog.ColorPickerDialog;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.HierarchyView;
 import com.tyron.layouteditor.models.Widget;
@@ -141,7 +144,12 @@ public class DesignActivity extends AppCompatActivity {
 
         recyclerview_hierarchy = findViewById(R.id.hierarchy_list);
         recyclerview_hierarchy.setLayoutManager(new LinearLayoutManager(this));
-        hierarchy_adapter = new TreeViewAdapter(hierarchy_data, Arrays.asList(new HierarchyViewBinder()));
+        HierarchyViewBinder binder = new HierarchyViewBinder();
+        binder.setOnItemLongClickListener(((holder, position, node) -> {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            ((HierarchyView)node.getContent()).widget.getAsView().performClick();
+        }));
+        hierarchy_adapter = new TreeViewAdapter(hierarchy_data, Arrays.asList(binder));
         recyclerview_hierarchy.setAdapter(hierarchy_adapter);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -170,6 +178,10 @@ public class DesignActivity extends AppCompatActivity {
                 .setWidgetFactory(factory)
                 .setFactory2(new EditorFactory(factory))
                 .create();
+
+
+//        ColorPickerDialog dialog = ColorPickerDialog.newInstance();
+//        dialog.show(getSupportFragmentManager(), "");
 
     }
 

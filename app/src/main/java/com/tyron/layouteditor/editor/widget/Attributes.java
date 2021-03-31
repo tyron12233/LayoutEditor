@@ -29,6 +29,7 @@ public class Attributes {
 	public static final int TYPE_DRAWABLE_STRING = 6;
     public static final int TYPE_LAYOUT_STRING = 4;
 	public static final int TYPE_DIMENSION = 5;
+	public static final int TYPE_COLOR = 7;
 
     static{
         types.put(View.Weight, TYPE_NUMBER);
@@ -59,8 +60,10 @@ public class Attributes {
         types.put(View.Below, TYPE_LAYOUT_STRING);
 
         types.put(TextView.Text, TYPE_STRING);
-		types.put(View.Background, TYPE_DRAWABLE_STRING);
+		types.put(View.Background, TYPE_DRAWABLE_STRING | TYPE_COLOR);
 		types.put(View.Id, TYPE_STRING);
+
+		types.put(TextView.TextColor, TYPE_COLOR);
     }
     public static class View {
 
