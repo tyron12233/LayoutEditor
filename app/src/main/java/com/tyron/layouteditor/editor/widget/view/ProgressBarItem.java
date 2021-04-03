@@ -26,20 +26,6 @@ public class ProgressBarItem extends ProgressBar implements BaseWidget {
 
     @NonNull
     @Override
-    public ArrayList<Attribute> getAttributes() {
-        ArrayList<Attribute> attributes = new ArrayList<>(Attributes.getViewAttributes(this));
-
-        attributes.add(new Attribute(Attributes.ProgressBar.Indeterminate, new Primitive(isIndeterminate())));
-        attributes.add(new Attribute(Attributes.ProgressBar.Max, new Primitive(getMax())));
-
-        if(getParent() instanceof RelativeLayoutItem){
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));
-        }
-        return attributes;
-    }
-
-    @NonNull
-    @Override
     public View getAsView() {
         return this;
     }
@@ -65,12 +51,5 @@ public class ProgressBarItem extends ProgressBar implements BaseWidget {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
-    }
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-        if(id == NotificationCenter.didUpdateWidget && args[0].equals(getStringId())){
-            viewManager.updateAttributes( (List<Attribute>) args[1] );
-        }
     }
 }

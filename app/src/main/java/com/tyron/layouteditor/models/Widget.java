@@ -45,66 +45,7 @@ public class Widget {
 		}
 		
 		public Layout getLayout(Editor editor, EditorContext context, EditorView widget){
-				
-				List<Layout.Attribute> attributes = new ArrayList<>();
-				
-				ViewTypeParser.AttributeSet.Attribute attribute = editor.getAttributeId(Attributes.View.Height, clazz);
-				Value value = attribute.processor.precompile(new Primitive("wrap_content"), context, context.getFunctionManager());
-				attributes.add(new Layout.Attribute(attribute.id, value));
-				
-				ViewTypeParser.AttributeSet.Attribute attributeW = editor.getAttributeId(Attributes.View.Width, clazz);
-				Value valueW = Dimension.valueOf("match_parent");//attributeW.processor.precompile(new Primitive("match_parent"), context, context.getFunctionManager());
-				attributes.add(new Layout.Attribute(attributeW.id, valueW));
-				
-				ViewTypeParser.AttributeSet.Attribute attributeP = editor.getAttributeId(Attributes.View.Padding, clazz);
-				Value valueP = attributeW.processor.precompile(new Primitive("8dp"), context, context.getFunctionManager());
-				attributes.add(new Layout.Attribute(attributeP.id, valueP));
-			    
-				try{
-				int count = AndroidUtilities.countWidgets((ViewGroup) widget, Class.forName("android.widget." + clazz)) + 1;
-				
-			  while(context.getInflater().getIdGenerator().keyExists(clazz + count)){
-			      count++;
-			   }
-			
-			
-			
-			    ViewTypeParser.AttributeSet.Attribute attributeI = editor.getAttributeId(Attributes.View.Id, clazz);
-				Value valueI = attributeI.processor.precompile(new Primitive(clazz + count), context, context.getFunctionManager());
-				attributes.add(new Layout.Attribute(attributeI.id, valueI));
-			    }catch(Exception e){}
-				
-				if(clazz.equals(TEXTVIEW) || clazz.equals(BUTTON)){
-					ViewTypeParser.AttributeSet.Attribute attributeText = editor.getAttributeId(Attributes.TextView.Text, clazz);
-				    Value valueText = attributeText.processor.precompile(new Primitive("TextView"), context, context.getFunctionManager());
-				    attributes.add(new Layout.Attribute(attributeText.id, valueText));
-			   
-				}
-				
-			    
-			/*	ObjectValue attrWidth = new ObjectValue();
-				attrs.add(Attributes.View.Width, Dimension.valueOf("match_parent"));
-				attributes.add(new Layout.Attribute(editor.getAttributeId(Attributes.View.Width, "LinearLayout").id, attrWidth));
-		
-				ObjectValue attrPadding = new ObjectValue();
-				attrs.add(Attributes.View.Margin, Dimension.valueOf("8dp"));
-				attributes.add(new Layout.Attribute(editor.getAttributeId(Attributes.View.Margin, "LinearLayout").id, attrPadding));
-				*/
-				
-				//int count = 1;
-				
-				/*
-				for(Map.Entry<String, Layout> entry : context.getEditorResources().getLayoutManager().getLayouts()){
-					if(entry.getValue().type.equals(clazz)){
-						count++;
-					}
-				}*/
-				/*
-				ObjectValue attrId = new ObjectValue();
-				attrId.addProperty(Attributes.View.Id, clazz + count);
-				attributes.add(new Layout.Attribute(editor.getAttributeId(Attributes.View.Id, "View").id, attrId));
-				*/
-				return new Layout(clazz, attributes, null, null);
+				return new Layout(clazz, new ArrayList<>(), null, null);
 		}
 		
 		public static Layout createLinearLayout(){

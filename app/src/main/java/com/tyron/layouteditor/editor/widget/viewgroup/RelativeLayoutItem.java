@@ -15,8 +15,6 @@ import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.NotificationCenter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget {
     private Manager viewManager;
 
     @Override
-    public @NotNull View getAsView() {
+    public @NonNull View getAsView() {
         return this;
     }
 
@@ -55,18 +53,6 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget {
     }
 
 
-    @NonNull
-    @Override
-    public ArrayList<Attribute> getAttributes() {
-        ArrayList<Attribute> attributes = new ArrayList<>(Attributes.getViewAttributes(this));
-
-        if (getParent() instanceof RelativeLayoutItem) {
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));
-        }
-
-        return attributes;
-    }
-
     Rect rect = new Rect();
     @Override
     public void onDraw(Canvas canvas){
@@ -75,7 +61,7 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget {
         canvas.drawRect(rect, Theme.getViewBackgroundPaint());
     }
 
-                       @Override
+    @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         NotificationCenter.getInstance().addObserver(this, NotificationCenter.didUpdateWidget);
@@ -88,11 +74,4 @@ public class RelativeLayoutItem extends RelativeLayout implements BaseWidget {
         NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
     }
 
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-        if (id == NotificationCenter.didUpdateWidget && ((String) args[0]).equals(getStringId())) {
-            viewManager.updateAttributes((List<Attribute>) args[1]);
-        }
-    }
 }

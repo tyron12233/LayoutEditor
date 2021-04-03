@@ -36,6 +36,12 @@ public class Attributes {
         types.put(View.Width, TYPE_DIMENSION);
         types.put(View.Height, TYPE_DIMENSION);
         types.put(View.Elevation, TYPE_DIMENSION);
+        types.put(View.Padding, TYPE_DIMENSION);
+        types.put(View.PaddingLeft, TYPE_DIMENSION);
+        types.put(View.PaddingTop, TYPE_DIMENSION);
+        types.put(View.PaddingRight, TYPE_DIMENSION);
+        types.put(View.PaddingBottom, TYPE_DIMENSION);
+        types.put(View.PaddingStart, TYPE_DIMENSION);
 
         types.put(LinearLayout.Orientation, TYPE_NUMBER);
         types.put(ProgressBar.Max, TYPE_NUMBER);
@@ -58,9 +64,13 @@ public class Attributes {
         types.put(View.ToEndOf, TYPE_LAYOUT_STRING);
         types.put(View.Above, TYPE_LAYOUT_STRING);
         types.put(View.Below, TYPE_LAYOUT_STRING);
+        types.put(View.AlignLeft, TYPE_LAYOUT_STRING);
+        types.put(View.AlignStart, TYPE_LAYOUT_STRING);
+        types.put(View.AlignEnd, TYPE_LAYOUT_STRING);
+        types.put(View.AlignRight, TYPE_LAYOUT_STRING);
 
         types.put(TextView.Text, TYPE_STRING);
-		types.put(View.Background, TYPE_DRAWABLE_STRING | TYPE_COLOR);
+		types.put(View.Background, TYPE_DRAWABLE_STRING);
 		types.put(View.Id, TYPE_STRING);
 
 		types.put(TextView.TextColor, TYPE_COLOR);
@@ -123,6 +133,8 @@ public class Attributes {
         public static final String MarginLeft = "android:layout_marginLeft";
         public static final String MarginRight = "android:layout_marginRight";
         public static final String MarginTop = "android:layout_marginTop";
+        public static final String MarginEnd = "android:layout_marginEnd";
+        public static final String MarginStart = "android:layout_marginStart";
         public static final String MinHeight = "android:minHeight";
         public static final String MinWidth = "android:minWidth";
         public static final String NextFocusForward = "android:nextFocusForward";
@@ -310,14 +322,21 @@ public class Attributes {
         //the index is the name of the rule and the actual value
         //is the value of the rule
         for(int i = 0; i < rules.length; i++){
+            boolean ruleBoolean = rules[i] == RelativeLayout.TRUE;
             int rule = rules[i];
-            
+		    
             switch(i){
                 case RelativeLayout.LEFT_OF:
                     arrayList.add(new Attribute(Attributes.View.ToLeftOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
                     continue;
                 case RelativeLayout.RIGHT_OF:
                     arrayList.add(new Attribute(Attributes.View.ToRightOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                    continue;
+				case RelativeLayout.START_OF:
+                    arrayList.add(new Attribute(Attributes.View.ToStartOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
+                    continue;
+                case RelativeLayout.END_OF:
+                    arrayList.add(new Attribute(Attributes.View.ToEndOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
                     continue;
                 case RelativeLayout.ABOVE:
                     arrayList.add(new Attribute(Attributes.View.Above, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
@@ -326,37 +345,37 @@ public class Attributes {
                     arrayList.add(new Attribute(Attributes.View.Below, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
                     continue;
                 case RelativeLayout.ALIGN_BASELINE:
-                    arrayList.add(new Attribute(Attributes.View.AlignBaseline, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignBaseline, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
                     continue;
                 case RelativeLayout.ALIGN_LEFT:
-                    arrayList.add(new Attribute(Attributes.View.AlignLeft, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignLeft, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
                     continue;
                 case RelativeLayout.ALIGN_PARENT_BOTTOM:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentBottom, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignParentBottom, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.ALIGN_PARENT_TOP:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentTop, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignParentTop, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
                     continue;
-                case RelativeLayout.ALIGN_PARENT_END:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentEnd, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                case 21:
+                    arrayList.add(new Attribute(Attributes.View.AlignParentEnd, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.ALIGN_PARENT_START:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentStart, rule == 0 ? Null.INSTANCE: new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignParentStart, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.ALIGN_PARENT_LEFT:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentLeft, rule == 0 ? Null.INSTANCE : new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignParentLeft, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.ALIGN_PARENT_RIGHT:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentRight, rule == 0 ? Null.INSTANCE: new Primitive(rule)));
+                    arrayList.add(new Attribute(Attributes.View.AlignParentRight, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.CENTER_IN_PARENT:
-                    arrayList.add(new Attribute(View.CenterInParent, rule == 0 ? Null.INSTANCE: new Primitive(rule)));
+                    arrayList.add(new Attribute(View.CenterInParent, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.CENTER_HORIZONTAL:
-                    arrayList.add(new Attribute(View.CenterHorizontal, rule == 0 ? Null.INSTANCE: new Primitive(rule)));
+                    arrayList.add(new Attribute(View.CenterHorizontal, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
                     continue;
                 case RelativeLayout.CENTER_VERTICAL:
-                    arrayList.add(new Attribute(View.CenterVertical, rule == 0 ? Null.INSTANCE: new Primitive(rule)));
+                    arrayList.add(new Attribute(View.CenterVertical, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
                     continue;
             }
         }

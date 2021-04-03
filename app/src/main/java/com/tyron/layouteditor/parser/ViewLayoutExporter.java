@@ -29,7 +29,7 @@ public class ViewLayoutExporter {
 
     public static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 
-    public static String inflate(BaseWidget widget) throws ParserConfigurationException, TransformerException {
+    public static String export(BaseWidget widget) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setNamespaceAware(true);
         DocumentBuilder db = builderFactory.newDocumentBuilder();
@@ -44,7 +44,7 @@ public class ViewLayoutExporter {
             }
 			
 			if(attr.key.equals(Attributes.LinearLayout.Orientation)){
-				attr.value = new Primitive(attr.value.getAsInt() == 0 ? "vertical" : "horizontal");
+				attr.value = new Primitive(attr.value.getAsInt() == 1 ? "vertical" : "horizontal");
 			}
 			
 			switch (Attributes.getType(attr.key)){
@@ -91,7 +91,7 @@ public class ViewLayoutExporter {
                 }
 				
 				if(attr.key.equals(Attributes.LinearLayout.Orientation)){
-				    attr.value = new Primitive(attr.value.getAsInt() == 0 ? "vertical" : "horizontal");
+				    attr.value = new Primitive(attr.value.getAsInt() == 1 ? "vertical" : "horizontal");
 			    }
 			
 			    switch (Attributes.getType(attr.key)){

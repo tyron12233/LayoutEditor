@@ -1,25 +1,40 @@
 package com.tyron.layouteditor.editor;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
 
+import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
+import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.values.Layout;
+import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Value;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class EditorView extends LinearLayout {
 
     private final EditorContext editorContext;
     private final EditorLayoutInflater layoutInflater;
     private final Editor editor;
+	
+	private Drawable preFocusedDrawable;
+	
     View.OnLongClickListener onLongClickListener = v -> {
         ViewCompat.startDragAndDrop(v, null, new DragShadowBuilder(v), v, 0);
         ((ViewGroup) v.getParent()).removeView(v);
@@ -27,9 +42,21 @@ public class EditorView extends LinearLayout {
     };
     View.OnClickListener onClickListener = v -> {
         BaseWidget currentWidget = (BaseWidget) v;
-        final PropertiesView d = PropertiesView.newInstance(currentWidget.getAttributes(), currentWidget.getStringId(), currentWidget.getViewManager().getContext().getInflater().getIdGenerator());
+        final PropertiesView d = PropertiesView.newInstance(currentWidget);
         d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "");
     };
+	
+	View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener(){
+		@Override
+		public void onFocusChange(View view, boolean focused){
+			if(focused){
+				preFocusedDrawable = view.getBackground();
+				view.setBackgroundColor(0xce000000);
+			}else{
+			    view.setBackground(preFocusedDrawable);
+			}
+		}
+	};
     /**
      * The view that represents the shadow
      */
@@ -45,7 +72,7 @@ public class EditorView extends LinearLayout {
 
             ViewGroup hostView = (ViewGroup) v;
 
-            if (v instanceof EditorView && hostView.getChildCount() > 1) {
+            if (v instanceof EditorView && getChildCountWithoutShadow(hostView) >= 1) {
                 removeView(shadow);
                 return false;
             }
@@ -70,6 +97,8 @@ public class EditorView extends LinearLayout {
                     //create a new one
                     if (object instanceof Widget) {
                         view = layoutInflater.inflate(((Widget) object).getLayout(editor, editorContext, EditorView.this), null);
+                        addDefaultAttributes(view);
+                        view.getAsView().setMinimumHeight(AndroidUtilities.dp(50));
                     } else {
                         view = (BaseWidget) object;
                     }
@@ -84,6 +113,7 @@ public class EditorView extends LinearLayout {
                     //so it can be dragged on too
                     view.getAsView().setOnDragListener(this);
                     view.getAsView().setOnClickListener(onClickListener);
+					view.getAsView().setOnFocusChangeListener(onFocusChangeListener);
                     view.getAsView().setOnLongClickListener(onLongClickListener);
 
                     break;
@@ -195,6 +225,7 @@ public class EditorView extends LinearLayout {
             if (view instanceof ViewGroup) {
                 view.setOnDragListener(dragListener);
             }
+			view.setOnFocusChangeListener(onFocusChangeListener);
             view.setOnClickListener(onClickListener);
         }
     }
@@ -272,5 +303,48 @@ public class EditorView extends LinearLayout {
 
 		return index;
 	}
+	
+	public int getChildCountWithoutShadow(ViewGroup view){
+		
+		int count = 0;
+		for(int i = 0; i < view.getChildCount(); i++){
+			View child = view.getChildAt(i);
+			if(child == shadow){
+				continue;
+			}
+			count++;
+		}
+		
+		return count;
+	}
+
+	private void addDefaultAttributes(BaseWidget widget){
+        View view = widget.getAsView();
+        List<Attribute> attributes = new ArrayList<>();
+
+        if(view instanceof ViewGroup){
+            attributes.add(new Attribute(Attributes.View.Width, new Primitive("match_parent")));
+        }else{
+            attributes.add(new Attribute(Attributes.View.Width, new Primitive("wrap_content")));
+        }
+
+        if(view instanceof TextView){
+            attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(view.getClass().getSimpleName())));
+        }
+
+        attributes.add(new Attribute(Attributes.View.Height, new Primitive("wrap_content")));
+        attributes.add(new Attribute(Attributes.View.Padding, new Primitive("8dp")));
+
+        //generating id
+        int count = AndroidUtilities.countWidgets(this, view.getClass());
+
+        while(layoutInflater.getIdGenerator().keyExists(view.getClass().getSimpleName() + count)){
+            count++;
+        }
+        attributes.add(new Attribute(Attributes.View.Id, new Primitive(view.getClass().getSimpleName() + count)));
+
+        widget.getViewManager().updateAttributes(attributes);
+        view.setTag(R.id.attributes, new LinkedHashSet<>(attributes));
+    }
 
 }

@@ -21,6 +21,7 @@ import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.editor.widget.compat.CompatAttributes;
 import com.tyron.layouteditor.editor.widget.view.ViewItem;
 import com.tyron.layouteditor.processor.AttributeProcessor;
 import com.tyron.layouteditor.processor.BooleanAttributeProcessor;
@@ -258,6 +259,38 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
             }
         });
 
+        addAttributeProcessor(Attributes.View.MarginStart, new DimensionAttributeProcessor<V>() {
+            @Override
+            public void setDimension(V view, float dimension) {
+                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                    ViewGroup.MarginLayoutParams layoutParams;
+                    layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                    layoutParams.setMarginStart((int) dimension);
+                    view.setLayoutParams(layoutParams);
+                } else {
+                    if (EditorConstants.isLoggingEnabled()) {
+                        Log.e(TAG, "margins can only be applied to views with parent ViewGroup");
+                    }
+                }
+            }
+        });
+
+        addAttributeProcessor(Attributes.View.MarginEnd, new DimensionAttributeProcessor<V>() {
+            @Override
+            public void setDimension(V view, float dimension) {
+                if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                    ViewGroup.MarginLayoutParams layoutParams;
+                    layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                    layoutParams.setMarginEnd((int) dimension);
+                    view.setLayoutParams(layoutParams);
+                } else {
+                    if (EditorConstants.isLoggingEnabled()) {
+                        Log.e(TAG, "margins can only be applied to views with parent ViewGroup");
+                    }
+                }
+            }
+        });
+
         addAttributeProcessor(Attributes.View.MinHeight, new DimensionAttributeProcessor<V>() {
             @Override
             public void setDimension(V view, float dimension) {
@@ -415,6 +448,14 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
         addAttributeProcessor(Attributes.View.CenterInParent, createRelativeLayoutBooleanRuleProcessor(RelativeLayout.CENTER_IN_PARENT));
         addAttributeProcessor(Attributes.View.AlignParentStart, createRelativeLayoutBooleanRuleProcessor(RelativeLayout.ALIGN_PARENT_START));
         addAttributeProcessor(Attributes.View.AlignParentEnd, createRelativeLayoutBooleanRuleProcessor(RelativeLayout.ALIGN_PARENT_END));
+
+        //constraint layout
+        addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToLeftOf, new StringAttributeProcessor<V>() {
+            @Override
+            public void setString(V view, String value) {
+
+            }
+        });
     }
 
 
@@ -437,6 +478,7 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
             public void setBoolean(V view, boolean value) {
                 int trueOrFalse = ParseHelper.parseRelativeLayoutBoolean(value);
                 ParseHelper.addRelativeLayoutRule(view, rule, trueOrFalse);
+				android.widget.Toast.makeText(view.getContext(), "rule: " + rule + " " + trueOrFalse, android.widget.Toast.LENGTH_LONG).show();
             }
         };
     }

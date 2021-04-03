@@ -229,8 +229,8 @@ public class DesignActivity extends AppCompatActivity {
 
             String str = "";
             		try {
-            str = ViewLayoutExporter.inflate(editorView.getRootEditorView());
-            	} catch (ParserConfigurationException | TransformerException e) {
+            str = ViewLayoutExporter.export(editorView.getRootEditorView());
+            	} catch (Exception e) {
             		e.printStackTrace();
             } finally {
             Intent intent = new Intent(this, ViewSourceActivity.class);

@@ -14,7 +14,7 @@ import com.tyron.layouteditor.models.Attribute;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LayoutIdAutoCompleteAdapter extends ArrayAdapter<String> {
+public class StringAutoCompleteAdapter extends ArrayAdapter<String> {
 
     Context context;
     int resource, textViewResourceId;
@@ -61,7 +61,7 @@ public class LayoutIdAutoCompleteAdapter extends ArrayAdapter<String> {
         }
     };
 
-    public LayoutIdAutoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
+    public StringAutoCompleteAdapter(Context context, int resource, int textViewResourceId, List<String> items) {
         super(context, resource, textViewResourceId, items);
         this.context = context;
         this.resource = resource;

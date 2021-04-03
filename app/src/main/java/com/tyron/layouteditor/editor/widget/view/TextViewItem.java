@@ -15,8 +15,6 @@ import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Primitive;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,28 +25,10 @@ public class TextViewItem extends TextView implements BaseWidget {
         super(context);
     }
 
-    @NotNull
-    @Override
-    public ArrayList<Attribute> getAttributes() {
-        ArrayList<Attribute> attributes = new ArrayList<>(Attributes.getViewAttributes(this));
-
-        attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
-
-        int textColor = getCurrentTextColor() - (16777215 + 1);
-
-        attributes.add(new Attribute(Attributes.TextView.TextColor, new Primitive(String.format("#%06X", (0xFFFFFF & textColor)))));
-
-        if (getParent() instanceof RelativeLayoutItem) {
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));
-        }
-
-        return attributes;
-    }
-
     private Manager viewManager;
 
     @Override
-    public @NotNull View getAsView() {
+    public @NonNull View getAsView() {
         return this;
     }
 
@@ -74,12 +54,6 @@ public class TextViewItem extends TextView implements BaseWidget {
 	public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
-    }
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-		if(id == NotificationCenter.didUpdateWidget && args[0].equals(getStringId())){
-			viewManager.updateAttributes( (List<Attribute>) args[1] );
-		}
     }
 
     

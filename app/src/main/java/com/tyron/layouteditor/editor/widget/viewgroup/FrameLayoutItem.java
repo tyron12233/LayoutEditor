@@ -35,18 +35,6 @@ public class FrameLayoutItem extends FrameLayout implements BaseWidget {
 
     @NonNull
     @Override
-    public ArrayList<Attribute> getAttributes() {
-
-        ArrayList<Attribute> attributes = new ArrayList<>(Attributes.getViewAttributes(this));
-
-        if(getParent() instanceof RelativeLayoutItem){
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));
-        }
-        return attributes;
-    }
-
-    @NonNull
-    @Override
     public View getAsView() {
         return this;
     }
@@ -72,13 +60,5 @@ public class FrameLayoutItem extends FrameLayout implements BaseWidget {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
-    }
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-        if(id == NotificationCenter.didUpdateWidget && ((String)args[0]).equals(getStringId())){
-            //noinspection unchecked
-            viewManager.updateAttributes((List<Attribute>)args[1]);
-        }
     }
 }

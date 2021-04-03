@@ -9,7 +9,7 @@ import com.tyron.layouteditor.toolbox.BiMap;
 import com.tyron.layouteditor.toolbox.HashBiMap;
 import com.tyron.layouteditor.util.AndroidUtilities;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 /**
  * <p>
@@ -166,7 +166,7 @@ public class Dimension extends Value {
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         final String value;

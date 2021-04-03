@@ -30,19 +30,6 @@ public class ButtonItem extends Button implements BaseWidget {
 
     @NonNull
     @Override
-    public ArrayList<Attribute> getAttributes() {
-        ArrayList<Attribute> attributes = new ArrayList<>(Attributes.getViewAttributes(this));
-
-        attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(getText().toString())));
-
-        if(getParent() instanceof RelativeLayoutItem){
-            attributes.addAll(Attributes.getRelativeLayoutChildAttributes(this));
-        }
-        return attributes;
-    }
-
-    @NonNull
-    @Override
     public View getAsView() {
         return this;
     }
@@ -68,12 +55,5 @@ public class ButtonItem extends Button implements BaseWidget {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
-    }
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-        if(id == NotificationCenter.didUpdateWidget && args[0].equals(getStringId())){
-            viewManager.updateAttributes( (List<Attribute>) args[1] );
-        }
     }
 }

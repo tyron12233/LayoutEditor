@@ -124,20 +124,29 @@ public class ViewManager implements BaseWidget.Manager {
 	@Override
 	public void updateAttributes(List<Attribute> attrs){
 		
-		LinkedHashSet<Layout.Attribute> attributeSet = new LinkedHashSet<>(this.layout.attributes);
+		//LinkedHashSet<Layout.Attribute> attributeSet = new LinkedHashSet<>(this.layout.attributes);
 		
 		for(Attribute attr : attrs) {
 			
+			
 			ViewTypeParser.AttributeSet.Attribute attribute = parser.getAttributeSet().getAttribute(attr.key);
-			Value value = attr.value;
-			attributeSet.add(new Layout.Attribute(attribute.id, value));
+			Value value = attribute.processor.precompile(attr.value, getContext(), getContext().getFunctionManager());
 			
 			parser.handleAttribute(view, attribute.id, value);
 			
+			Layout.Attribute newAttr = new Layout.Attribute(attribute.id, value);
+			
+			if(layout.attributes.contains(newAttr)){
+				
+				layout.attributes.set(layout.attributes.indexOf(newAttr), newAttr);
+			}else{
+			    layout.attributes.add(newAttr);
+			}
+			android.widget.Toast.makeText(getContext(), attr.key, android.widget.Toast.LENGTH_LONG).show();
 		}
 		
-		layout.attributes.clear();
-		layout.attributes.addAll(attributeSet);
+		/*layout.attributes.clear();
+		layout.attributes.addAll(attributeSet);*/
 		
 	}
 

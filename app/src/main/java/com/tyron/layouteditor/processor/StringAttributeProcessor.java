@@ -25,6 +25,7 @@ public abstract class StringAttributeProcessor<V extends View> extends Attribute
         } else {
             setString(view, "[Object]");
         }
+		
     }
 
     @Override

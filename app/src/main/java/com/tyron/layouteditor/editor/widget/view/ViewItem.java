@@ -12,6 +12,7 @@ import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ViewItem extends View implements BaseWidget {
 
@@ -44,20 +45,10 @@ public class ViewItem extends View implements BaseWidget {
         this.viewManager = manager;
     }
 
-    @NonNull
-    @Override
-    public ArrayList<Attribute> getAttributes() {
-        return null;
-    }
 
     @NonNull
     @Override
     public View getAsView() {
         return this;
-    }
-
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-
     }
 }

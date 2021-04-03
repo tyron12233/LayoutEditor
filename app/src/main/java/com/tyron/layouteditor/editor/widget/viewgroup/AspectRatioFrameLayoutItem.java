@@ -13,6 +13,7 @@ import com.tyron.layouteditor.editor.widget.custom.AspectRatioFrameLayout;
 import com.tyron.layouteditor.models.Attribute;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AspectRatioFrameLayoutItem extends AspectRatioFrameLayout implements BaseWidget {
 
@@ -47,18 +48,8 @@ public class AspectRatioFrameLayoutItem extends AspectRatioFrameLayout implement
 
     @NonNull
     @Override
-    public ArrayList<Attribute> getAttributes() {
-        return null;
-    }
-
-    @NonNull
-    @Override
     public View getAsView() {
         return this;
     }
 
-    @Override
-    public void didReceivedNotification(int id, Object... args) {
-
-    }
 }
