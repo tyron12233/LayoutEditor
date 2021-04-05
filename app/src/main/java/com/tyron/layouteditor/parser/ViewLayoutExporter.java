@@ -3,9 +3,11 @@ package com.tyron.layouteditor.parser;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.Widget;
+import com.tyron.layouteditor.values.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,7 +29,7 @@ public class ViewLayoutExporter {
 
     public static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 
-    public static String inflate(BaseWidget widget) throws ParserConfigurationException, TransformerException {
+    public static String export(BaseWidget widget) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setNamespaceAware(true);
         DocumentBuilder db = builderFactory.newDocumentBuilder();
@@ -40,6 +42,22 @@ public class ViewLayoutExporter {
             if (attr.value.isNull()) {
                 continue;
             }
+			
+			if(attr.key.equals(Attributes.LinearLayout.Orientation)){
+				attr.value = new Primitive(attr.value.getAsInt() == 1 ? "vertical" : "horizontal");
+			}
+			
+			switch (Attributes.getType(attr.key)){
+				case Attributes.TYPE_LAYOUT_STRING:
+				    attr.value = new Primitive("@id/" + attr.value);
+				break;
+				
+				case Attributes.TYPE_STRING:
+				    if(attr.key.equals(Attributes.View.Id)){
+						attr.value = new Primitive("@+id/" + attr.value);
+					}
+				break;
+			}
             rootElement.setAttributeNS(ANDROID_NS, attr.key, attr.value.toString());
         }
         document.appendChild(rootElement);
@@ -68,9 +86,26 @@ public class ViewLayoutExporter {
             Element childElement = element.getOwnerDocument().createElement(child.getClass().getSuperclass().getName());
 
             for (Attribute attr : ((BaseWidget) child).getAttributes()) {
-                if (attr.value.isNull()) {
+                if (attr == null || attr.value.isNull()) {
                     continue;
                 }
+				
+				if(attr.key.equals(Attributes.LinearLayout.Orientation)){
+				    attr.value = new Primitive(attr.value.getAsInt() == 1 ? "vertical" : "horizontal");
+			    }
+			
+			    switch (Attributes.getType(attr.key)){
+				    case Attributes.TYPE_LAYOUT_STRING:
+				        attr.value = new Primitive("@id/" + attr.value);
+				        break;
+				
+				    case Attributes.TYPE_STRING:
+				        if(attr.key.equals(Attributes.View.Id)){
+						    attr.value = new Primitive("@+id/" + attr.value);
+					     }
+				     break;
+				}
+			
                 childElement.setAttributeNS(ANDROID_NS,  attr.key, attr.value.toString());
             }
             if (child instanceof ViewGroup) {

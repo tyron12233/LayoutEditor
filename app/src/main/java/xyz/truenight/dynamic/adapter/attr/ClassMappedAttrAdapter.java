@@ -18,6 +18,8 @@ package xyz.truenight.dynamic.adapter.attr;
 
 import android.view.View;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +51,8 @@ public class ClassMappedAttrAdapter<T extends View> implements TypedAttrAdapter<
      * @param value attribute value
      * @return is attribute applied
      */
-    public boolean apply(T view, String name, String value) {
+    public boolean apply(EditorContext context, T view, String name, String value) {
         AttrAdapter<T> adapter = mMap.get(name);
-        return adapter != null && adapter.apply(view, value);
+        return adapter != null && adapter.apply(context,view, value);
     }
 }

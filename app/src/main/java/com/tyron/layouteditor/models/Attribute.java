@@ -25,10 +25,14 @@ public class Attribute {
 
     @Override
     public boolean equals(@Nullable Object obj) {
+		
+		if(obj == null){
+			return false;
+		}
         if (!(obj instanceof Attribute)) {
             return false;
         }
 
-        return this.key.equals(((Attribute) obj).key);
+        return (this.key.equals(((Attribute) obj).key));
     }
 }

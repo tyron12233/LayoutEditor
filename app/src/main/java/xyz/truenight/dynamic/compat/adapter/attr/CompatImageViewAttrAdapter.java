@@ -20,6 +20,8 @@ import android.view.View;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import xyz.truenight.dynamic.AttrUtils;
 import xyz.truenight.dynamic.adapter.attr.TypedAttrAdapter;
 
@@ -34,7 +36,7 @@ public class CompatImageViewAttrAdapter implements TypedAttrAdapter<AppCompatIma
     }
 
     @Override
-    public boolean apply(AppCompatImageView v, String name, String value) {
+    public boolean apply(EditorContext context, AppCompatImageView v, String name, String value) {
         switch (name) {
             case "app:srcCompat":
                 return setSrc(v, value);

@@ -1,7 +1,10 @@
 package com.tyron.layouteditor;
 
 import android.app.Application;
+import android.app.PendingIntent;
+import android.app.AlarmManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 
 import java.io.PrintWriter;
@@ -19,7 +22,7 @@ public class ApplicationLoader extends Application {
 	public void onCreate() {
 		this.uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 		
-		/*Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+		Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
 			Intent intent = new Intent(getApplicationContext(), DebugActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -37,7 +40,7 @@ public class ApplicationLoader extends Application {
 			System.exit(2);
 			
 			uncaughtExceptionHandler.uncaughtException(thread, ex);
-		});*/
+		});
 		super.onCreate();
 		
 		applicationContext = this;

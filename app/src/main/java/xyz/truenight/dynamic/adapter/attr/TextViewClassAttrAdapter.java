@@ -20,6 +20,8 @@ import android.graphics.Color;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+import com.tyron.layouteditor.editor.EditorContext;
+
 import xyz.truenight.dynamic.AttrUtils;
 
 final class TextViewClassAttrAdapter extends ClassMappedAttrAdapter<TextView> {
@@ -28,14 +30,14 @@ final class TextViewClassAttrAdapter extends ClassMappedAttrAdapter<TextView> {
         super(TextView.class);
         put("android:textSize", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context, TextView view, String value) {
                 view.setTextSize(TypedValue.COMPLEX_UNIT_PX, AttrUtils.getDimension(view.getContext(), value));
                 return true;
             }
         });
         put("android:textColor", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 if (value.startsWith("#")) {
                     view.setTextColor(Color.parseColor(value));
                 } else {
@@ -46,42 +48,42 @@ final class TextViewClassAttrAdapter extends ClassMappedAttrAdapter<TextView> {
         });
         put("android:gravity", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 view.setGravity(AttrUtils.getGravity(value));
                 return true;
             }
         });
         put("android:maxLines", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 view.setMaxLines(AttrUtils.parseInt(value));
                 return true;
             }
         });
         put("android:ellipsize", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 view.setEllipsize(AttrUtils.getEllipsize(value));
                 return true;
             }
         });
         put("android:textAllCaps", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 view.setAllCaps(AttrUtils.getBoolean(view.getContext(), value));
                 return true;
             }
         });
         put("android:textStyle", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 view.setTypeface(view.getTypeface(), AttrUtils.getTextStyle(value));
                 return true;
             }
         });
         put("android:text", new AttrAdapter<TextView>() {
             @Override
-            public boolean apply(TextView view, String value) {
+            public boolean apply(EditorContext context,TextView view, String value) {
                 if (value.startsWith("@")) {
                     view.setText(AttrUtils.getResId(view.getContext(), value));
                 } else {

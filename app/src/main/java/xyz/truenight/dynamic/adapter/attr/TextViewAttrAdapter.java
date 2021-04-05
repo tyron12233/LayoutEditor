@@ -21,16 +21,39 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tyron.layouteditor.editor.EditorContext;
+import com.tyron.layouteditor.editor.ViewTypeParser;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.editor.widget.view.TextViewItem;
+import com.tyron.layouteditor.managers.ViewManager;
+import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Value;
+
+import java.util.Arrays;
+
 import xyz.truenight.dynamic.AttrUtils;
 
 final class TextViewAttrAdapter implements TypedAttrAdapter<TextView> {
     @Override
     public boolean isSuitable(View view) {
-        return view instanceof TextView;
+        return view instanceof TextViewItem;
     }
 
     @Override
-    public boolean apply(TextView view, String name, String value) {
+    public boolean apply(EditorContext context, TextView view, String name, String value) {
+        if(view instanceof BaseWidget) {
+
+            try {
+                ViewTypeParser.AttributeSet.Attribute attribute = ((ViewManager) ((BaseWidget) view).getViewManager()).parser.getAttributeSet().getAttribute(name);
+                Value val = attribute.processor.compile(new Primitive(value), view.getContext());
+
+                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, new Primitive(value))));
+                return true;
+            }catch(Exception ignore){
+
+            }
+        }
         switch (name) {
             case "android:textSize":
                 view.setTextSize(TypedValue.COMPLEX_UNIT_PX, AttrUtils.getDimension(view.getContext(), value));

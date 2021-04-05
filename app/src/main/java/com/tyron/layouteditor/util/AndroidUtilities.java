@@ -13,7 +13,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.tyron.layouteditor.ApplicationLoader;
-import com.tyron.layouteditor.editor.widget.LinearLayoutItem;
+import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 
 public class AndroidUtilities {
 
@@ -129,6 +129,7 @@ public class AndroidUtilities {
         }
         return count;
     }
+   
 
     public static LinearLayoutItem getRootView(View view) {
         if (view instanceof LinearLayoutItem && ((LinearLayoutItem) view).isRootView()) {

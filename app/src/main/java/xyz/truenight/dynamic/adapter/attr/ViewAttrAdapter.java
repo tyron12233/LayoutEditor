@@ -19,6 +19,17 @@ package xyz.truenight.dynamic.adapter.attr;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
+import android.util.Log;
+
+import com.tyron.layouteditor.editor.EditorContext;
+import com.tyron.layouteditor.editor.ViewTypeParser;
+import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.managers.ViewManager;
+import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.values.Primitive;
+import com.tyron.layouteditor.values.Value;
+
+import java.util.Arrays;
 
 import xyz.truenight.dynamic.AttrUtils;
 
@@ -30,7 +41,24 @@ final class ViewAttrAdapter implements TypedAttrAdapter {
     }
 
     @Override
-    public boolean apply(View view, String name, String value) {
+    public boolean apply(EditorContext context, View view, String name, String value) {
+
+        if(view instanceof BaseWidget){
+            try {
+                ViewTypeParser.AttributeSet.Attribute attribute = ((ViewManager) ((BaseWidget) view).getViewManager()).parser.getAttributeSet().getAttribute(name);
+
+                if(name.equals("android:id")){
+                    value = value.replace("@+id/", "");
+                }
+                Value val = attribute.processor.compile(new Primitive(value), view.getContext());
+
+                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, new Primitive(value))));
+
+                return true;
+            }catch(Exception ignore){
+			     Log.e(this.getClass().getName(), "Error applying attribute: " + name +":" + value + "error: " + ignore);
+            }
+        }
         switch (name) {
             //region for all views
             case "android:id":
@@ -71,30 +99,16 @@ final class ViewAttrAdapter implements TypedAttrAdapter {
                         AttrUtils.getDimension(view.getContext(), value));
                 return true;
             case "android:paddingStart":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    view.setPaddingRelative(AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingTop(),
-                            view.getPaddingEnd(),
-                            view.getPaddingBottom());
-                } else {
-                    view.setPadding(AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingTop(),
-                            view.getPaddingRight(),
-                            view.getPaddingBottom());
-                }
+                view.setPaddingRelative(AttrUtils.getDimension(view.getContext(), value),
+                        view.getPaddingTop(),
+                        view.getPaddingEnd(),
+                        view.getPaddingBottom());
                 return true;
             case "android:paddingEnd":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    view.setPaddingRelative(view.getPaddingStart(),
-                            view.getPaddingTop(),
-                            AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingBottom());
-                } else {
-                    view.setPadding(view.getPaddingLeft(),
-                            view.getPaddingTop(),
-                            AttrUtils.getDimension(view.getContext(), value),
-                            view.getPaddingBottom());
-                }
+                view.setPaddingRelative(view.getPaddingStart(),
+                        view.getPaddingTop(),
+                        AttrUtils.getDimension(view.getContext(), value),
+                        view.getPaddingBottom());
                 return true;
             case "android:background":
                 return setBackground(view, value);

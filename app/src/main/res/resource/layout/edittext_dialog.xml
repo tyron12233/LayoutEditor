@@ -1,0 +1,51 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<LinearLayout
+		android:id="@+id/linear1"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:paddingTop="8dp"
+		android:gravity="center_horizontal|center_vertical"
+		android:orientation="horizontal">
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/textinput_id"
+			android:layout_width="125dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+			<com.tyron.layouteditor.editor.widget.custom.TextInputAutoCompleteTextView
+				android:id="@+id/edittext_id"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:textSize="12sp"
+				android:textColor="#000000"
+				android:hint="Attribute name"
+				android:textColorHint="#607D8B" />
+		</com.google.android.material.textfield.TextInputLayout>
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/textinput_value"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_weight="3"
+			style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+			<com.tyron.layouteditor.editor.widget.custom.TextInputAutoCompleteTextView
+				android:id="@+id/edittext_value"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:textSize="12sp"
+				android:textColor="#000000"
+				android:hint="Edit Text"
+				android:textColorHint="#607D8B" />
+		</com.google.android.material.textfield.TextInputLayout>
+	</LinearLayout>
+</LinearLayout>
