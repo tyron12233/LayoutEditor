@@ -98,7 +98,7 @@ public class EditorView extends LinearLayout {
                     if (object instanceof Widget) {
                         view = layoutInflater.inflate(((Widget) object).getLayout(editor, editorContext, EditorView.this), null);
                         addDefaultAttributes(view);
-                        view.getAsView().setMinimumHeight(AndroidUtilities.dp(50));
+                        //view.getAsView().setMinimumHeight(AndroidUtilities.dp(50));
                     } else {
                         view = (BaseWidget) object;
                     }
@@ -344,7 +344,7 @@ public class EditorView extends LinearLayout {
         attributes.add(new Attribute(Attributes.View.Id, new Primitive(view.getClass().getSimpleName() + count)));
 
         widget.getViewManager().updateAttributes(attributes);
-        view.setTag(R.id.attributes, new LinkedHashSet<>(attributes));
+        //view.setTag(R.id.attributes, new LinkedHashSet<>(attributes));
     }
 
 }

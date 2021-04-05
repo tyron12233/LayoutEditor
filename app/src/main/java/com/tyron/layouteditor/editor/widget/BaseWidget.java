@@ -6,12 +6,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.DataContext;
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.ViewManager;
 import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
+import com.tyron.layouteditor.editor.widget.compat.CompatAttributes;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Layout;
@@ -39,7 +42,7 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
         LinkedHashSet<Attribute> appliedAttributes = new LinkedHashSet<>();
 
         if(getAsView().getTag(R.id.attributes) != null){
-            appliedAttributes.addAll((LinkedHashSet<Attribute>) getAsView().getTag(R.id.attributes));
+            appliedAttributes.addAll((Collection<? extends Attribute>) getAsView().getTag(R.id.attributes));
 
             return new ArrayList<>(appliedAttributes);
         }
@@ -109,6 +112,13 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
             attrs.add(Attributes.View.Weight);
             attrs.add(Attributes.View.Gravity);
         }
+		
+		if(view.getParent() instanceof ConstraintLayout){
+			attrs.add(CompatAttributes.ConstraintLayout.LeftToLeftOf);
+			attrs.add(CompatAttributes.ConstraintLayout.LeftToRightOf);
+			attrs.add(CompatAttributes.ConstraintLayout.RightToLeftOf);
+			attrs.add(CompatAttributes.ConstraintLayout.RightToRightOf);
+		}
 
         return new ArrayList<>(attrs);
     }

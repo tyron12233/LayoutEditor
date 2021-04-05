@@ -46,9 +46,9 @@ final class TextViewAttrAdapter implements TypedAttrAdapter<TextView> {
 
             try {
                 ViewTypeParser.AttributeSet.Attribute attribute = ((ViewManager) ((BaseWidget) view).getViewManager()).parser.getAttributeSet().getAttribute(name);
-                Value val = attribute.processor.precompile(new Primitive(value), view.getContext(), ((BaseWidget) view).getViewManager().getContext().getFunctionManager());
+                Value val = attribute.processor.compile(new Primitive(value), view.getContext());
 
-                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, val)));
+                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, new Primitive(value))));
                 return true;
             }catch(Exception ignore){
 

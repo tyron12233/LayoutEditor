@@ -19,6 +19,7 @@ package xyz.truenight.dynamic.adapter.attr;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
+import android.util.Log;
 
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
@@ -49,13 +50,13 @@ final class ViewAttrAdapter implements TypedAttrAdapter {
                 if(name.equals("android:id")){
                     value = value.replace("@+id/", "");
                 }
-                Value val = attribute.processor.precompile(new Primitive(value), view.getContext(), ((BaseWidget) view).getViewManager().getContext().getFunctionManager());
+                Value val = attribute.processor.compile(new Primitive(value), view.getContext());
 
-                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, val)));
+                ((BaseWidget) view).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, new Primitive(value))));
 
                 return true;
             }catch(Exception ignore){
-
+			     Log.e(this.getClass().getName(), "Error applying attribute: " + name +":" + value + "error: " + ignore);
             }
         }
         switch (name) {

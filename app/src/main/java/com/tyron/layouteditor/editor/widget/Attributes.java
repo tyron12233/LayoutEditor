@@ -74,6 +74,7 @@ public class Attributes {
 		types.put(View.Id, TYPE_STRING);
 
 		types.put(TextView.TextColor, TYPE_COLOR);
+		types.put(TextView.TextColorHint, TYPE_COLOR);
     }
     public static class View {
 

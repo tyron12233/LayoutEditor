@@ -66,6 +66,9 @@ public class EditorFactory implements DynamicLayoutInflater.Factory2 {
             case Widget.EDITTEXT:
                 view = factory.createWidget(new Widget(Widget.EDITTEXT));
                 break;
+			case Widget.CONSTRAINT_LAYOUT:
+			    view = factory.createWidget(new Widget(Widget.CONSTRAINT_LAYOUT));
+				break;
         }
 
         if(view == null){

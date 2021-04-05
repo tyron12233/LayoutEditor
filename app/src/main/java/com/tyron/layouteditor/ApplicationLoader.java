@@ -21,8 +21,8 @@ public class ApplicationLoader extends Application {
 	@Override
 	public void onCreate() {
 		this.uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-		
-		/*Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+		/*
+		Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
 			Intent intent = new Intent(getApplicationContext(), DebugActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 

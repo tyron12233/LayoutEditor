@@ -19,6 +19,7 @@ public class Widget {
 		public static final String LINEAR_LAYOUT = "LinearLayout";
 		public static final String RELATIVE_LAYOUT = "RelativeLayout";
 		public static final String FRAME_LAYOUT = "FrameLayout";
+		public static final String CONSTRAINT_LAYOUT = "ConstraintLayout";
 
 		public static final String TEXTVIEW = "TextView";
 		public static final String EDITTEXT = "EditText";

@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.tyron.layouteditor.parser.IncludeParser;
 import com.tyron.layouteditor.parser.ViewParser;
 import com.tyron.layouteditor.parser.custom.ButtonParser;
+import com.tyron.layouteditor.parser.custom.ConstraintLayoutParser;
 import com.tyron.layouteditor.parser.custom.EditTextParser;
 import com.tyron.layouteditor.parser.custom.FrameLayoutParser;
 import com.tyron.layouteditor.parser.custom.LinearLayoutParser;
@@ -46,6 +47,7 @@ public class EditorBuilder {
             builder.register(new ProgressBarParser());
 //            builder.register(new HorizontalProgressBarParser());
 
+            builder.register(new ConstraintLayoutParser());
             // register the default functions
             builder.register(Function.DATE);
             builder.register(Function.FORMAT);

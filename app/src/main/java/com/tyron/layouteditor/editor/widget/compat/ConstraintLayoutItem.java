@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tyron.layouteditor.Theme;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.util.NotificationCenter;
 
 public class ConstraintLayoutItem extends ConstraintLayout implements BaseWidget {
 
@@ -17,6 +18,7 @@ public class ConstraintLayoutItem extends ConstraintLayout implements BaseWidget
 
     public ConstraintLayoutItem(@NonNull Context context) {
         super(context);
+		setWillNotDraw(false);
     }
 
     Rect rect = new Rect();
@@ -41,4 +43,17 @@ public class ConstraintLayoutItem extends ConstraintLayout implements BaseWidget
     public void setViewManager(@NonNull Manager manager) {
         this.manager = manager;
     }
+	
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		NotificationCenter.getInstance().addObserver(this, NotificationCenter.didUpdateWidget);
+	}
+	
+	
+	@Override
+	public void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		NotificationCenter.getInstance().removeObserver(this, NotificationCenter.didUpdateWidget);
+	}
 }

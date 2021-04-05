@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.tyron.layouteditor.editor.EditorConstants;
 import com.tyron.layouteditor.editor.EditorContext;
@@ -450,13 +452,43 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
         addAttributeProcessor(Attributes.View.AlignParentEnd, createRelativeLayoutBooleanRuleProcessor(RelativeLayout.ALIGN_PARENT_END));
 
         //constraint layout
-        addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToLeftOf, new StringAttributeProcessor<V>() {
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToLeftOf, createConstraintLayoutRuleProcessor(ConstraintSet.LEFT, ConstraintSet.LEFT));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToRightOf, createConstraintLayoutRuleProcessor(ConstraintSet.LEFT, ConstraintSet.RIGHT));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.RightToLeftOf, createConstraintLayoutRuleProcessor(ConstraintSet.RIGHT, ConstraintSet.LEFT));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.RightToRightOf, createConstraintLayoutRuleProcessor(ConstraintSet.RIGHT, ConstraintSet.RIGHT));
+        /*addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToLeftOf, new StringAttributeProcessor<V>() {
             @Override
             public void setString(V view, String value) {
 
             }
         });
+*/
     }
+	
+	
+	private AttributeProcessor<V> createConstraintLayoutRuleProcessor(int startSide, int endSide) {
+		
+		return new StringAttributeProcessor<V>() {
+			@Override
+			public void setString(V view, String value) {
+				if(view.getParent() instanceof ConstraintLayout){
+					
+					ConstraintLayout constraintLayout = (ConstraintLayout) view.getParent();
+					ConstraintSet set = new ConstraintSet();
+					int id = ((BaseWidget) view).getViewManager().getContext().getInflater().getUniqueViewId(value);
+					
+					set.clone(constraintLayout);
+					set.connect(view.getId(), startSide, id, endSide);
+					set.applyTo(constraintLayout);
+					
+				}else{
+				    if(EditorConstants.isLoggingEnabled()){
+						Log.e(TAG, "ConstraintLayout attributes can only be used with ConstraintLayout childs");
+					}
+				}
+			}
+		};
+	}
 
 
     private AttributeProcessor<V> createRelativeLayoutRuleProcessor(final int rule) {

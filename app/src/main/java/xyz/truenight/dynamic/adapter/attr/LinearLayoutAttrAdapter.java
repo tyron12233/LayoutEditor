@@ -29,9 +29,9 @@ final class LinearLayoutAttrAdapter implements TypedAttrAdapter<LinearLayout> {
         if(v instanceof BaseWidget){
             try {
                 ViewTypeParser.AttributeSet.Attribute attribute = ((ViewManager) ((BaseWidget) v).getViewManager()).parser.getAttributeSet().getAttribute(name);
-                Value val = attribute.processor.precompile(new Primitive(value), v.getContext(), ((BaseWidget) v).getViewManager().getContext().getFunctionManager());
+                Value val = attribute.processor.compile(new Primitive(value), v.getContext());
 
-                ((BaseWidget) v).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, val)));
+                ((BaseWidget) v).getViewManager().updateAttributes(Arrays.asList(new Attribute(name, new Primitive(value))));
                 return true;
             }catch(Exception ignore){
 
