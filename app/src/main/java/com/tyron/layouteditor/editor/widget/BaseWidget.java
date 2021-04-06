@@ -1,11 +1,13 @@
 package com.tyron.layouteditor.editor.widget;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tyron.layouteditor.R;
@@ -59,6 +61,9 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
         attrs.add(Attributes.View.Width);
         attrs.add(Attributes.View.Height);
         attrs.add(Attributes.View.Background);
+        attrs.add(Attributes.View.BackgroundTint);
+        attrs.add(Attributes.View.Foreground);
+        attrs.add(Attributes.View.ForegroundTint);
 
         attrs.add(Attributes.View.Padding);
         attrs.add(Attributes.View.PaddingLeft);
@@ -80,6 +85,28 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
             attrs.add(Attributes.TextView.Text);
             attrs.add(Attributes.TextView.TextColor);
             attrs.add(Attributes.TextView.TextSize);
+            attrs.add(Attributes.TextView.Hint);
+            attrs.add(Attributes.TextView.TextColorHint);
+        }
+
+        if(view instanceof ImageView){
+            attrs.add(Attributes.ImageView.ScaleType);
+            attrs.add(Attributes.ImageView.AdjustViewBounds);
+            attrs.add(Attributes.ImageView.Src);
+        }
+
+        if(view instanceof CardView){
+            attrs.add(CompatAttributes.CardView.BackgroundColor);
+            attrs.add(CompatAttributes.CardView.ContentPadding);
+            attrs.add(CompatAttributes.CardView.ContentPaddingBottom);
+            attrs.add(CompatAttributes.CardView.ContentPaddingLeft);
+            attrs.add(CompatAttributes.CardView.ContentPaddingRight);
+            attrs.add(CompatAttributes.CardView.ContentPaddingTop);
+            attrs.add(CompatAttributes.CardView.CornerRadius);
+            attrs.add(CompatAttributes.CardView.Elevation);
+            attrs.add(CompatAttributes.CardView.MaxElevation);
+            attrs.add(CompatAttributes.CardView.PreventCornerOverlap);
+            attrs.add(CompatAttributes.CardView.UseCompatPadding);
         }
 
         //relative layout child attributes
@@ -118,6 +145,11 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
 			attrs.add(CompatAttributes.ConstraintLayout.LeftToRightOf);
 			attrs.add(CompatAttributes.ConstraintLayout.RightToLeftOf);
 			attrs.add(CompatAttributes.ConstraintLayout.RightToRightOf);
+
+			attrs.add(CompatAttributes.ConstraintLayout.BottomToBottomOf);
+			attrs.add(CompatAttributes.ConstraintLayout.BottomToTopOf);
+			attrs.add(CompatAttributes.ConstraintLayout.TopToBottomOf);
+			attrs.add(CompatAttributes.ConstraintLayout.TopToTopOf);
 		}
 
         return new ArrayList<>(attrs);

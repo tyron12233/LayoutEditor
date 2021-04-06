@@ -38,17 +38,21 @@ import com.tyron.layouteditor.parser.ViewLayoutExporter;
 import com.tyron.layouteditor.toolbox.tree.TreeNode;
 import com.tyron.layouteditor.toolbox.tree.TreeViewAdapter;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.util.CopyFileAsyncTask;
+import com.tyron.layouteditor.util.FileUtil;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Value;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -189,11 +193,16 @@ public class DesignActivity extends AppCompatActivity {
         widgets.add(new Widget(Widget.LINEAR_LAYOUT));
         widgets.add(new Widget(Widget.RELATIVE_LAYOUT));
         widgets.add(new Widget(Widget.FRAME_LAYOUT));
+       // widgets.add(new Widget(Widget.SCROLLVIEW));
+
+        widgets.add(new Widget(Widget.CARDVIEW));
 		widgets.add(new Widget(Widget.CONSTRAINT_LAYOUT));
+
         widgets.add(new Widget(Widget.BUTTON));
         widgets.add(new Widget(Widget.EDITTEXT));
         widgets.add(new Widget(Widget.PROGRESSBAR));
         widgets.add(new Widget(Widget.TEXTVIEW));
+        widgets.add(new Widget(Widget.IMAGEVIEW));
 
         adapter.notifyDataSetChanged();
     }
@@ -218,6 +227,7 @@ public class DesignActivity extends AppCompatActivity {
 
         menu.add(0, 0, 0, "VIEW_SOURCE");
         menu.add(0, 1, 0, "IMPORT XML");
+        menu.add(0,2,0, "ADD IMAGES");
 
         return true;
     }
@@ -244,6 +254,13 @@ public class DesignActivity extends AppCompatActivity {
             intent.setType("text/xml");
             intent = Intent.createChooser(intent, "Select layout file");
             startActivityForResult(intent, 20);
+        }
+
+        if(id == 2) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent = Intent.createChooser(intent, "Select image");
+            startActivityForResult(intent, 21);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -282,6 +299,29 @@ public class DesignActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error inflating xml file: " + e, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
+        }else if(requestCode == 21){
+            Uri uri = data.getData();
+            CopyFileAsyncTask task = new CopyFileAsyncTask(uri, this, new CopyFileAsyncTask.CallBackTask() {
+                @Override
+                public void onCopyPreExecute() {
+
+                }
+
+                @Override
+                public void onCopyProgressUpdate(int progress) {
+
+                }
+
+                @Override
+                public void onCopyPostExecute(String path, boolean wasSuccessful, String reason) {
+                    if(wasSuccessful) {
+                        editorView.getEditorContext().getEditorResources()
+                                .putDrawable(reason.substring(0, reason.lastIndexOf(".")), path);
+                    }
+                }
+            });
+
+            task.execute();
         }
     }
 

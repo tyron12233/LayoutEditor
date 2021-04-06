@@ -6,6 +6,7 @@ import android.widget.RelativeLayout;
 
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.IdGenerator;
+import com.tyron.layouteditor.editor.widget.compat.CompatAttributes;
 import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.values.Dimension;
@@ -30,6 +31,7 @@ public class Attributes {
     public static final int TYPE_LAYOUT_STRING = 4;
 	public static final int TYPE_DIMENSION = 5;
 	public static final int TYPE_COLOR = 7;
+	public static final int TYPE_DRAWABLE = 8;
 
     static{
         types.put(View.Weight, TYPE_NUMBER);
@@ -75,6 +77,10 @@ public class Attributes {
 
 		types.put(TextView.TextColor, TYPE_COLOR);
 		types.put(TextView.TextColorHint, TYPE_COLOR);
+		types.put(View.BackgroundTint, TYPE_COLOR);
+		types.put(View.ForegroundTint, TYPE_COLOR);
+
+		types.put(ImageView.Src, TYPE_DRAWABLE);
     }
     public static class View {
 
@@ -279,107 +285,12 @@ public class Attributes {
      */
     public static int getType(String string){
         Integer type = types.get(string);
-		return type == null ? 0 : type;
-    }
-	
-	public static ArrayList<Attribute> getViewAttributes(BaseWidget widget){
 
-        EditorContext context = widget.getViewManager().getContext();
-		ArrayList<Attribute> attrs = new ArrayList<>();
-		android.view.ViewGroup.LayoutParams params = widget.getAsView().getLayoutParams();
-
-		attrs.add(new Attribute(View.Width, Dimension.valueOf(params.width)));
-		attrs.add(new Attribute(View.Height, Dimension.valueOf(params.height)));
-
-		//get the background of a view if it's a Color, then we set it as a String
-        Drawable drawable = widget.getAsView().getBackground();
-
-        if(drawable == null){
-            attrs.add(new Attribute(View.Background, new Primitive("#00FFFFFF")));
-        }else if(drawable instanceof ColorDrawable){
-            int color = ((ColorDrawable) drawable).getColor();
-            String colorHex = String.format("#%06X", (0xFFFFFF & color));
-            attrs.add(new Attribute(View.Background, new Primitive(colorHex)));
+        if(type == null){
+            type = CompatAttributes.getType(string);
         }
 
-        //TODO: HANDLE OBJECT VALUE FOR @drawable
-
-        attrs.add(new Attribute(View.Id, new Primitive(context.getInflater().getIdGenerator().getString(widget.getAsView().getId()))));
-		
-		return attrs;
-	}
-
-    /**
-     * @return returns the attributes of a child view with a parent of RelativeLayout
-     */
-    public static ArrayList<Attribute> getRelativeLayoutChildAttributes(BaseWidget widget){
-
-        RelativeLayoutItem.LayoutParams params = (RelativeLayoutItem.LayoutParams) widget.getAsView().getLayoutParams();
-        IdGenerator idGenerator = widget.getViewManager().getContext().getInflater().getIdGenerator();
-        ArrayList<Attribute> arrayList = new ArrayList<>();
-
-
-        int[] rules = params.getRules();
-        //the index is the name of the rule and the actual value
-        //is the value of the rule
-        for(int i = 0; i < rules.length; i++){
-            boolean ruleBoolean = rules[i] == RelativeLayout.TRUE;
-            int rule = rules[i];
-		    
-            switch(i){
-                case RelativeLayout.LEFT_OF:
-                    arrayList.add(new Attribute(Attributes.View.ToLeftOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.RIGHT_OF:
-                    arrayList.add(new Attribute(Attributes.View.ToRightOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-				case RelativeLayout.START_OF:
-                    arrayList.add(new Attribute(Attributes.View.ToStartOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.END_OF:
-                    arrayList.add(new Attribute(Attributes.View.ToEndOf, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.ABOVE:
-                    arrayList.add(new Attribute(Attributes.View.Above, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.BELOW:
-                    arrayList.add(new Attribute(Attributes.View.Below, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.ALIGN_BASELINE:
-                    arrayList.add(new Attribute(Attributes.View.AlignBaseline, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.ALIGN_LEFT:
-                    arrayList.add(new Attribute(Attributes.View.AlignLeft, rule == 0 ? Null.INSTANCE : new Primitive(idGenerator.getString(rule))));
-                    continue;
-                case RelativeLayout.ALIGN_PARENT_BOTTOM:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentBottom, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.ALIGN_PARENT_TOP:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentTop, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
-                    continue;
-                case 21:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentEnd, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.ALIGN_PARENT_START:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentStart, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.ALIGN_PARENT_LEFT:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentLeft, rule == 0 ? Null.INSTANCE : new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.ALIGN_PARENT_RIGHT:
-                    arrayList.add(new Attribute(Attributes.View.AlignParentRight, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.CENTER_IN_PARENT:
-                    arrayList.add(new Attribute(View.CenterInParent, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.CENTER_HORIZONTAL:
-                    arrayList.add(new Attribute(View.CenterHorizontal, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
-                    continue;
-                case RelativeLayout.CENTER_VERTICAL:
-                    arrayList.add(new Attribute(View.CenterVertical, rule == 0 ? Null.INSTANCE: new Primitive(ruleBoolean)));
-                    continue;
-            }
-        }
-        return arrayList;
+        return type == null ? TYPE_STRING : type;
     }
+
 }

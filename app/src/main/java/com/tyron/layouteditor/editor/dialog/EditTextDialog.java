@@ -195,29 +195,14 @@ public class EditTextDialog extends DialogFragment {
                 Value value = null;
                 String textValue = editText.getText().toString();
 
+                if(validateKey(editText_id.getText().toString()) && validateValue(textValue)) {
+                    attribute.value = new Primitive(textValue);
+                    attribute.key = editText_id.getText().toString();
 
-
-                switch (Attributes.getType(editText_id.getText().toString())) {
-                    case Attributes.TYPE_BOOLEAN:
-                        attribute.value = new Primitive(Boolean.parseBoolean(textValue));
-                        break;
-                    case Attributes.TYPE_NUMBER:
-                        attribute.value = new Primitive(Integer.parseInt(textValue));
-                        break;
-                    case Attributes.TYPE_DIMENSION:
-                        attribute.value = Dimension.valueOf(textValue);
-                        break;
-                    default:
-                    case Attributes.TYPE_STRING:
-                        attribute.value = new Primitive(textValue);
-                        break;
-					case Attributes.TYPE_DRAWABLE_STRING:
-					    attribute.value = DrawableValue.valueOf(textValue, EditTextDialog.this.getActivity());
+                    setAttribute(attribute);
+                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.didUpdateWidget, targetId, Collections.singletonList(attribute));
+                    dismiss();
                 }
-                attribute.key = editText_id.getText().toString();
-                setAttribute(attribute);
-                NotificationCenter.getInstance().postNotificationName(NotificationCenter.didUpdateWidget, targetId, Collections.singletonList(attribute));
-                dismiss();
             });
 
         }
@@ -291,9 +276,16 @@ public class EditTextDialog extends DialogFragment {
                 result = true;
                 break;
 			case Attributes.TYPE_DRAWABLE_STRING:
-			    result = value.matches("#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}");
-				error = "Must be a valid color hex";
+			    result = value.matches("#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}") | value.startsWith("@drawable/");
+				error = "Must be a valid drawable value";
 				break;
+            case Attributes.TYPE_DRAWABLE:
+                result = value.startsWith("@drawable/");
+                error = "Must be a valid drawable";
+                break;
+			case Attributes.TYPE_COLOR:
+                result = value.matches("#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}");
+                error = "Must be a valid color hex";
         }
 
         if (!result) {

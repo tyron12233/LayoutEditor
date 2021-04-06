@@ -19,12 +19,17 @@ public class Widget {
 		public static final String LINEAR_LAYOUT = "LinearLayout";
 		public static final String RELATIVE_LAYOUT = "RelativeLayout";
 		public static final String FRAME_LAYOUT = "FrameLayout";
+		public static final String SCROLLVIEW = "ScrollView";
+
+		public static final String CARDVIEW = "CardView";
 		public static final String CONSTRAINT_LAYOUT = "ConstraintLayout";
 
 		public static final String TEXTVIEW = "TextView";
 		public static final String EDITTEXT = "EditText";
 		public static final String BUTTON = "Button";
 		public static final String PROGRESSBAR = "ProgressBar";
+		public static final String IMAGEVIEW = "ImageView";
+
 
 		private String clazz;
 		private HashMap<String, Object> attributes;

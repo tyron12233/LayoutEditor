@@ -61,7 +61,7 @@ public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.Vi
 			
 			String attributeName = attr.key;
 			
-			DialogFragment dialog = null;
+			DialogFragment dialog = dialog = EditTextDialog.newInstance(availableAttributes,data, attr, targetId, idGenerator);
 			
 			switch(Attributes.getType(attributeName)){
 				case Attributes.TYPE_COLOR:
@@ -89,9 +89,7 @@ public class AttributesAdapter extends RecyclerView.Adapter<AttributesAdapter.Vi
 					
 					dialog = FormDialog.newInstance(attr, targetId, Choice.createLayoutDimension(), defaultItem);
 				}else{
-
 					//TODO: NUMBER DIALOG
-					dialog = EditTextDialog.newInstance(availableAttributes,data, attr, targetId, idGenerator);
 				}
 				break;
 				default:

@@ -1,6 +1,7 @@
 package com.tyron.layouteditor.parser;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,26 +13,37 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.EditorConstants;
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.editor.ViewTypeParser;
+import com.tyron.layouteditor.editor.exceptions.DrawableNotFoundException;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.compat.CompatAttributes;
 import com.tyron.layouteditor.editor.widget.view.ViewItem;
 import com.tyron.layouteditor.processor.AttributeProcessor;
 import com.tyron.layouteditor.processor.BooleanAttributeProcessor;
+import com.tyron.layouteditor.processor.ColorResourceProcessor;
 import com.tyron.layouteditor.processor.DimensionAttributeProcessor;
 import com.tyron.layouteditor.processor.DrawableResourceProcessor;
 import com.tyron.layouteditor.processor.GravityAttributeProcessor;
 import com.tyron.layouteditor.processor.StringAttributeProcessor;
 import com.tyron.layouteditor.values.AttributeResource;
+import com.tyron.layouteditor.values.Color;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.ObjectValue;
 import com.tyron.layouteditor.values.Resource;
@@ -76,12 +88,59 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
             }
         });
 
-        addAttributeProcessor(Attributes.View.Background, new DrawableResourceProcessor<V>() {
+        addAttributeProcessor(Attributes.View.Background, new StringAttributeProcessor<V>() {
             @Override
-            public void setDrawable(V view, Drawable drawable) {
-                view.setBackground(drawable);
-				
-				//throw new IllegalArgumentException("Called");
+            public void setString(V view, String value) {
+                if(value.startsWith("@drawable/")){
+
+                    if(view instanceof BaseWidget){
+                        BaseWidget widget = (BaseWidget)view;
+
+                        String path = widget.getViewManager()
+                                .getContext()
+                                .getEditorResources()
+                                .getDrawable(value.replace("@drawable/", ""));
+
+                        if(path.equals(EditorConstants.DATA_NULL)){
+                            //use default image
+                            setBackground(view, R.drawable.ic_warning);
+                        }else{
+                            setBackground(view, path);
+                        }
+                    }else{
+                        throw new IllegalStateException("View is not an instance of BaseWidget");
+                    }
+
+                }else{
+                    //the background starts with "#"
+                    if(Color.isColor(value)){
+                      view.setBackgroundColor(Color.valueOf(value).apply(view.getContext()).color);
+                    }
+                }
+            }
+        });
+
+        addAttributeProcessor(Attributes.View.BackgroundTint, new ColorResourceProcessor<V>() {
+            @Override
+            public void setColor(V view, int color) {
+                view.setBackgroundTintList(ColorStateList.valueOf(color));
+            }
+
+            @Override
+            public void setColor(V view, ColorStateList colors) {
+                view.setBackgroundTintList(colors);
+            }
+        });
+
+        addAttributeProcessor(Attributes.View.ForegroundTint, new ColorResourceProcessor<V>() {
+            @Override
+            public void setColor(V view, int color) {
+                view.setBackgroundTintList(ColorStateList.valueOf(color));
+            }
+
+            @Override
+            public void setColor(V view, ColorStateList colors) {
+                view.setBackgroundTintList(colors);
             }
         });
 
@@ -456,13 +515,12 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
 		addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToRightOf, createConstraintLayoutRuleProcessor(ConstraintSet.LEFT, ConstraintSet.RIGHT));
 		addAttributeProcessor(CompatAttributes.ConstraintLayout.RightToLeftOf, createConstraintLayoutRuleProcessor(ConstraintSet.RIGHT, ConstraintSet.LEFT));
 		addAttributeProcessor(CompatAttributes.ConstraintLayout.RightToRightOf, createConstraintLayoutRuleProcessor(ConstraintSet.RIGHT, ConstraintSet.RIGHT));
-        /*addAttributeProcessor(CompatAttributes.ConstraintLayout.LeftToLeftOf, new StringAttributeProcessor<V>() {
-            @Override
-            public void setString(V view, String value) {
 
-            }
-        });
-*/
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.BottomToBottomOf, createConstraintLayoutRuleProcessor(ConstraintSet.BOTTOM, ConstraintSet.BOTTOM));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.BottomToTopOf, createConstraintLayoutRuleProcessor(ConstraintSet.BOTTOM, ConstraintSet.TOP));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.TopToBottomOf, createConstraintLayoutRuleProcessor(ConstraintSet.TOP, ConstraintSet.BOTTOM));
+		addAttributeProcessor(CompatAttributes.ConstraintLayout.TopToTopOf, createConstraintLayoutRuleProcessor(ConstraintSet.TOP, ConstraintSet.TOP));
+
     }
 	
 	
@@ -475,7 +533,13 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
 					
 					ConstraintLayout constraintLayout = (ConstraintLayout) view.getParent();
 					ConstraintSet set = new ConstraintSet();
-					int id = ((BaseWidget) view).getViewManager().getContext().getInflater().getUniqueViewId(value);
+
+					int id;
+					if(value.equals("parent")) {
+					    id = ((BaseWidget) view).getViewManager().getContext().getInflater().getUniqueViewId(value);
+                    }else{
+					    id = ConstraintSet.PARENT_ID;
+                    }
 					
 					set.clone(constraintLayout);
 					set.connect(view.getId(), startSide, id, endSide);
@@ -513,5 +577,33 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
 				android.widget.Toast.makeText(view.getContext(), "rule: " + rule + " " + trueOrFalse, android.widget.Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    private void setBackground(View view, String path){
+        Glide.with(view).load(path).into(new CustomTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                view.setBackground(resource);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+                view.setBackground(placeholder);
+            }
+        });
+    }
+
+    private void setBackground(View view, @DrawableRes int id){
+        Glide.with(view).load(id).into(new CustomTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                view.setBackground(resource);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+                view.setBackground(placeholder);
+            }
+        });
     }
 }

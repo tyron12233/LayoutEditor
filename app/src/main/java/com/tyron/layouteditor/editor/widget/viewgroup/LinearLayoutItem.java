@@ -71,14 +71,7 @@ public class LinearLayoutItem extends LinearLayout implements BaseWidget {
 		backgroundPaint.setAntiAlias(true);
 		
 		backgroundPaint.setStrokeWidth(AndroidUtilities.dp(2));
-		
-		LayoutTransition layoutTransition = new LayoutTransition();
-		layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-		layoutTransition.disableTransitionType(LayoutTransition.DISAPPEARING);
-		layoutTransition.setDuration(180L);
-		setLayoutTransition(layoutTransition);
-		setAnimationCacheEnabled(true);
-		
+
 		for(int i = 0; i < handlePoints.length; i++){
 			handlePoints[i] = new Point();
 		}

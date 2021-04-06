@@ -6,12 +6,15 @@ import androidx.annotation.Nullable;
 import com.tyron.layouteditor.parser.IncludeParser;
 import com.tyron.layouteditor.parser.ViewParser;
 import com.tyron.layouteditor.parser.custom.ButtonParser;
+import com.tyron.layouteditor.parser.custom.CardViewParser;
 import com.tyron.layouteditor.parser.custom.ConstraintLayoutParser;
 import com.tyron.layouteditor.parser.custom.EditTextParser;
 import com.tyron.layouteditor.parser.custom.FrameLayoutParser;
+import com.tyron.layouteditor.parser.custom.ImageViewParser;
 import com.tyron.layouteditor.parser.custom.LinearLayoutParser;
 import com.tyron.layouteditor.parser.custom.ProgressBarParser;
 import com.tyron.layouteditor.parser.custom.RelativeLayoutParser;
+import com.tyron.layouteditor.parser.custom.ScrollViewParser;
 import com.tyron.layouteditor.parser.custom.TextViewParser;
 import com.tyron.layouteditor.parser.custom.ViewGroupParser;
 import com.tyron.layouteditor.processor.AttributeProcessor;
@@ -34,9 +37,9 @@ public class EditorBuilder {
             builder.register(new RelativeLayoutParser());
             builder.register(new LinearLayoutParser());
             builder.register(new FrameLayoutParser());
-//            builder.register(new ScrollViewParser());
+            builder.register(new ScrollViewParser());
 //            builder.register(new HorizontalScrollViewParser());
-//            builder.register(new ImageViewParser());
+            builder.register(new ImageViewParser());
             builder.register(new TextViewParser());
             builder.register(new EditTextParser());
             builder.register(new ButtonParser());
@@ -48,6 +51,8 @@ public class EditorBuilder {
 //            builder.register(new HorizontalProgressBarParser());
 
             builder.register(new ConstraintLayoutParser());
+
+            builder.register(new CardViewParser());
             // register the default functions
             builder.register(Function.DATE);
             builder.register(Function.FORMAT);

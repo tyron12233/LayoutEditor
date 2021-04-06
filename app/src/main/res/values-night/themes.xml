@@ -16,10 +16,28 @@
 
         <item name="windowBackgroundGrey">@color/black</item>
         <item name="DesignBottomSheetBackground">@color/black</item>
+
+        <item name="textAppearanceHeadline1">@style/TextAppearance.LayoutEditor.Headline1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.LayoutEditor.Body2</item>
     </style>
 
     <style name="DesignActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:background">@color/black</item>
     </style>
+
+    <style name="TextAppearance.LayoutEditor.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">64sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+   <style name ="TextAppearance.LayoutEditor.Body2" parent="TextAppearance.MaterialComponents.Body2">
+       <item name="android:textStyle">normal</item>
+       <item name="android:textAllCaps">false</item>
+       <item name="android:textSize">14sp</item>
+       <item name="android:letterSpacing">0</item>
+       <item name="android:textColor">#ffdedede</item>
+   </style>
 
 </resources>

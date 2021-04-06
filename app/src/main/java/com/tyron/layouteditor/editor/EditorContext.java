@@ -120,6 +120,9 @@ public class EditorContext extends ContextWrapper {
         @Nullable
         private StyleManager styleManager;
 
+        @NonNull
+        private DrawableManager drawableManager;
+
         Builder(@NonNull Context context, @NonNull Map<String, ViewTypeParser> parsers, @NonNull FunctionManager functionManager) {
             this.base = context;
             this.parsers = parsers;
@@ -141,13 +144,18 @@ public class EditorContext extends ContextWrapper {
             return this;
         }
 
+        public Builder setDrawableManager(@NonNull DrawableManager drawableManager){
+            this.drawableManager = drawableManager;
+            return this;
+        }
+
         public Builder setStyleManager(@Nullable StyleManager styleManager) {
             this.styleManager = styleManager;
             return this;
         }
 
         public EditorContext build() {
-            EditorResources resources = new EditorResources(parsers, layoutManager, functionManager, styleManager);
+            EditorResources resources = new EditorResources(parsers, layoutManager, functionManager, styleManager, drawableManager);
             return new EditorContext(base, resources, loader, callback);
         }
 

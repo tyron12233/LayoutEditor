@@ -132,7 +132,7 @@ public class ViewManager implements BaseWidget.Manager {
 			
 			
 			ViewTypeParser.AttributeSet.Attribute attribute = parser.getAttributeSet().getAttribute(attr.key);
-			Value value = attribute.processor.precompile(attr.value, getContext(), getContext().getFunctionManager());
+			Value value = attribute.processor.compile(attr.value, getContext());
 			
 			parser.handleAttribute(view, attribute.id, value);
 			
@@ -155,7 +155,8 @@ public class ViewManager implements BaseWidget.Manager {
 		}
 		
 		/*layout.attributes.clear();
-layout.attributes.addAll(attributeSet);*/
+layout.attributes.addAll(attributeSet);
+*/
 		
 	}
 	

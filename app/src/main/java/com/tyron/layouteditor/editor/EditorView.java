@@ -1,5 +1,6 @@
 package com.tyron.layouteditor.editor;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
@@ -7,7 +8,9 @@ import android.graphics.PorterDuff;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
@@ -19,11 +22,14 @@ import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.util.AndroidUtilities;
+import com.tyron.layouteditor.util.FileUtil;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.Primitive;
 import com.tyron.layouteditor.values.Value;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -32,6 +38,7 @@ public class EditorView extends LinearLayout {
     private final EditorContext editorContext;
     private final EditorLayoutInflater layoutInflater;
     private final Editor editor;
+    private final DrawableManager drawableManager;
 	
 	private Drawable preFocusedDrawable;
 	
@@ -72,7 +79,7 @@ public class EditorView extends LinearLayout {
 
             ViewGroup hostView = (ViewGroup) v;
 
-            if (v instanceof EditorView && getChildCountWithoutShadow(hostView) >= 1) {
+            if ((v instanceof EditorView || v instanceof ScrollView) && getChildCountWithoutShadow(hostView) >= 1) {
                 removeView(shadow);
                 return false;
             }
@@ -98,7 +105,7 @@ public class EditorView extends LinearLayout {
                     if (object instanceof Widget) {
                         view = layoutInflater.inflate(((Widget) object).getLayout(editor, editorContext, EditorView.this), null);
                         addDefaultAttributes(view);
-                        //view.getAsView().setMinimumHeight(AndroidUtilities.dp(50));
+                        view.getAsView().setMinimumHeight(AndroidUtilities.dp(50));
                     } else {
                         view = (BaseWidget) object;
                     }
@@ -116,6 +123,16 @@ public class EditorView extends LinearLayout {
 					view.getAsView().setOnFocusChangeListener(onFocusChangeListener);
                     view.getAsView().setOnLongClickListener(onLongClickListener);
 
+                    if(view.getAsView() instanceof ViewGroup){
+                        ViewGroup viewGroup = (ViewGroup) view.getAsView();
+
+                        LayoutTransition layoutTransition = new LayoutTransition();
+                        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+                        layoutTransition.disableTransitionType(LayoutTransition.DISAPPEARING);
+                        layoutTransition.setDuration(180L);
+                        viewGroup.setLayoutTransition(layoutTransition);
+                        viewGroup.setAnimationCacheEnabled(true);
+                    }
                     break;
                 }
 
@@ -166,7 +183,8 @@ public class EditorView extends LinearLayout {
         editor = new EditorBuilder().build();
         Layout rootLayout = Widget.createLinearLayout();
 
-        editorContext = editor.createContextBuilder(context).build();
+        drawableManager = new DrawableManager(new HashMap<>(getImages()));
+        editorContext = editor.createContextBuilder(context).setDrawableManager(drawableManager).build();
         layoutInflater = editorContext.getInflater();
 
         setOrientation(VERTICAL);
@@ -218,6 +236,7 @@ public class EditorView extends LinearLayout {
                 setViewListeners(child);
             }
 
+            view.setMinimumHeight(AndroidUtilities.dp(50));
         }
 
         if (view instanceof BaseWidget) {
@@ -332,6 +351,10 @@ public class EditorView extends LinearLayout {
             attributes.add(new Attribute(Attributes.TextView.Text, new Primitive(view.getClass().getSimpleName())));
         }
 
+        if(view instanceof ImageView){
+            attributes.add(new Attribute(Attributes.ImageView.Src, new Primitive("@drawable/ic_launcher")));
+        }
+
         attributes.add(new Attribute(Attributes.View.Height, new Primitive("wrap_content")));
         attributes.add(new Attribute(Attributes.View.Padding, new Primitive("8dp")));
 
@@ -347,4 +370,15 @@ public class EditorView extends LinearLayout {
         //view.setTag(R.id.attributes, new LinkedHashSet<>(attributes));
     }
 
+    public HashMap<String, String> getImages(){
+        HashMap<String, String> images = new HashMap<>();
+        ArrayList<String> filePaths = new ArrayList<>();
+        FileUtil.listDir(getContext().getExternalFilesDir("images").getPath(), filePaths);
+
+        for(String path : filePaths){
+            File file = new File(path);
+            images.put(file.getName().substring(0, file.getName().lastIndexOf(".")), file.getPath());
+        }
+        return images;
+    }
 }
