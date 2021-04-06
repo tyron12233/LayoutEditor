@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -95,7 +96,7 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 		recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 		recyclerView.setAdapter(adapter);
 		
-		LinearLayout addAttribute = view.findViewById(R.id.addAttr);
+		CardView addAttribute = view.findViewById(R.id.addAttr);
 		
 		addAttribute.setOnClickListener((v) -> {
 			Attribute attribute = new Attribute("", new Primitive(""));

@@ -16,5 +16,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:textIsSelectable="true"
-        android:theme="@style/TextAppearance.LayoutEditor.Body2"/>
+        style="@style/TextAppearance.LayoutEditor.Body2"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

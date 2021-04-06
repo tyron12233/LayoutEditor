@@ -37,7 +37,7 @@
 				android:padding="8dp"
 				android:text="TextView"
 				android:textSize="12sp"
-				android:theme="@style/TextAppearance.LayoutEditor.Body2" />
+				style="@style/TextAppearance.LayoutEditor.Body2" />
 		</LinearLayout>
 	</androidx.cardview.widget.CardView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -13,6 +13,7 @@
          />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/addAttr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -20,7 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
     <LinearLayout
-	    android:id="@+id/addAttr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="TextView"
-            android:theme="@style/TextAppearance.LayoutEditor.Body2"/>
+            style="@style/TextAppearance.LayoutEditor.Body2"/>
     </LinearLayout>
     </androidx.cardview.widget.CardView>
 
