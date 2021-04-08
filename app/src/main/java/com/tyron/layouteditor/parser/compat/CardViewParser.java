@@ -1,4 +1,4 @@
-package com.tyron.layouteditor.parser.custom;
+package com.tyron.layouteditor.parser.compat;
 
 import android.content.res.ColorStateList;
 import android.view.ViewGroup;

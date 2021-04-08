@@ -22,7 +22,9 @@ public class Widget {
 		public static final String SCROLLVIEW = "ScrollView";
 
 		public static final String CARDVIEW = "CardView";
+		public static final String MATERIAL_CARDVIEW = "MaterialCardView";
 		public static final String CONSTRAINT_LAYOUT = "ConstraintLayout";
+		public static final String COORDINATOR_LAYOUT = "CoordinatorLayout";
 
 		public static final String TEXTVIEW = "TextView";
 		public static final String EDITTEXT = "EditText";
@@ -51,10 +53,10 @@ public class Widget {
 		}
 		
 		public Layout getLayout(Editor editor, EditorContext context, EditorView widget){
-				return new Layout(clazz, new ArrayList<>(), null, null);
+				return new Layout(clazz, new ArrayList<>(), null, null, null);
 		}
 		
 		public static Layout createLinearLayout(){
-				return new Layout("LinearLayout", null, null, null);
+				return new Layout("LinearLayout", null, null, null, null);
 		}
 }

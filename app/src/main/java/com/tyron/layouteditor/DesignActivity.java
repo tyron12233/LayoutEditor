@@ -32,6 +32,7 @@ import com.tyron.layouteditor.editor.EditorView;
 import com.tyron.layouteditor.editor.WidgetFactory;
 import com.tyron.layouteditor.editor.dialog.ColorPickerDialog;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
+import com.tyron.layouteditor.models.Attribute;
 import com.tyron.layouteditor.models.HierarchyView;
 import com.tyron.layouteditor.models.Widget;
 import com.tyron.layouteditor.parser.ViewLayoutExporter;
@@ -52,7 +53,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -60,28 +64,21 @@ import javax.xml.transform.TransformerException;
 
 import xyz.truenight.dynamic.DynamicLayoutInflater;
 import xyz.truenight.dynamic.EditorFactory;
+import xyz.truenight.dynamic.compat.AsyncDynamicLayoutInflater;
 import xyz.truenight.dynamic.compat.CompatDynamicLayoutInflater;
 
 public class DesignActivity extends AppCompatActivity {
 
     private final List<TreeNode> hierarchy_data = new ArrayList<>();
     private final ArrayList<Widget> widgets = new ArrayList<>();
-    private RecyclerView recyclerview_widgets;
-    private RecyclerView recyclerview_hierarchy;
     private WidgetsAdapter adapter;
 
-    private BottomSheetBehavior<View> bottomSheetBehavior;
     private MaterialCardView bottomSheetLayout;
 
     private TreeViewAdapter hierarchy_adapter;
 
-    private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
-    private MaterialToolbar toolbar;
-    private ViewGroup rootView;
     private EditorView editorView;
-
-    private DynamicLayoutInflater inflater;
 
     private final float bottomSheetRadius = AndroidUtilities.dp(16);
 
@@ -91,15 +88,15 @@ public class DesignActivity extends AppCompatActivity {
         setContentView(R.layout.activity_design);
         AndroidUtilities.checkDisplaySize(this, null);
 
-        rootView = findViewById(R.id.editor_container);
+        ViewGroup rootView = findViewById(R.id.editor_container);
         drawerLayout = findViewById(R.id.drawerLayout);
-        toolbar = findViewById(R.id.toolbar);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
         findViewById(R.id.app_bar).bringToFront();
         editorView = new EditorView(this);
         rootView.addView(editorView);
 
         setSupportActionBar(toolbar);
-        drawerToggle = new ActionBarDrawerToggle(
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
                 toolbar,
@@ -108,7 +105,7 @@ public class DesignActivity extends AppCompatActivity {
         );
 
         if (savedInstanceState != null) {
-            Layout savedLayout = null;
+            Layout savedLayout;
 
             savedLayout = Value.getGson().fromJson(savedInstanceState.getString("savedLayout"), Layout.class);
 
@@ -119,7 +116,7 @@ public class DesignActivity extends AppCompatActivity {
         }
 
         bottomSheetLayout = findViewById(R.id.bottomsheet_layout);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -131,6 +128,10 @@ public class DesignActivity extends AppCompatActivity {
                     case BottomSheetBehavior.STATE_EXPANDED:
                         bottomSheet.setElevation(AndroidUtilities.dp(12));
                         break;
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                    case BottomSheetBehavior.STATE_SETTLING:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
                 }
             }
 
@@ -141,19 +142,19 @@ public class DesignActivity extends AppCompatActivity {
         });
 
 
-        recyclerview_widgets = findViewById(R.id.recyclerview_widgets);
+        RecyclerView recyclerview_widgets = findViewById(R.id.recyclerview_widgets);
         recyclerview_widgets.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerview_widgets.setAdapter(adapter = new WidgetsAdapter(widgets, bottomSheetBehavior));
         populate();
 
-        recyclerview_hierarchy = findViewById(R.id.hierarchy_list);
+        RecyclerView recyclerview_hierarchy = findViewById(R.id.hierarchy_list);
         recyclerview_hierarchy.setLayoutManager(new LinearLayoutManager(this));
         HierarchyViewBinder binder = new HierarchyViewBinder();
         binder.setOnItemLongClickListener(((holder, position, node) -> {
             drawerLayout.closeDrawer(GravityCompat.START);
             ((HierarchyView)node.getContent()).widget.getAsView().performClick();
         }));
-        hierarchy_adapter = new TreeViewAdapter(hierarchy_data, Arrays.asList(binder));
+        hierarchy_adapter = new TreeViewAdapter(hierarchy_data, Collections.singletonList(binder));
         recyclerview_hierarchy.setAdapter(hierarchy_adapter);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -178,7 +179,7 @@ public class DesignActivity extends AppCompatActivity {
         });
 
         WidgetFactory factory = new WidgetFactory(editorView.getEditorContext(), editorView.getEditor(), editorView);
-        inflater = DynamicLayoutInflater.base(editorView.getEditorContext())
+        DynamicLayoutInflater inflater = DynamicLayoutInflater.base(editorView.getEditorContext())
                 .setWidgetFactory(factory)
                 .setFactory2(new EditorFactory(factory))
                 .create();
@@ -196,7 +197,9 @@ public class DesignActivity extends AppCompatActivity {
        // widgets.add(new Widget(Widget.SCROLLVIEW));
 
         widgets.add(new Widget(Widget.CARDVIEW));
+        widgets.add(new Widget(Widget.MATERIAL_CARDVIEW));
 		widgets.add(new Widget(Widget.CONSTRAINT_LAYOUT));
+		widgets.add(new Widget(Widget.COORDINATOR_LAYOUT));
 
         widgets.add(new Widget(Widget.BUTTON));
         widgets.add(new Widget(Widget.EDITTEXT));
@@ -218,6 +221,7 @@ public class DesignActivity extends AppCompatActivity {
                 savedInstanceState.putString("savedLayout", saveLayout());
             }
         }catch(Exception e){
+            e.printStackTrace();
             //TODO: Handle unknown views
         }
     }
@@ -289,6 +293,7 @@ public class DesignActivity extends AppCompatActivity {
                 //inflate the xml
                 //remove all views from previous layout
                 editorView.removeAllViews();
+                AsyncDynamicLayoutInflater asyncDynamicLayoutInflater = new AsyncDynamicLayoutInflater(editorView.getEditorContext());
                 editorView.setViewListeners(DynamicLayoutInflater.from(editorView.getEditorContext()).inflate(content, editorView));
 
             } catch (FileNotFoundException e) {
@@ -334,12 +339,14 @@ public class DesignActivity extends AppCompatActivity {
         return Value.getGson().toJson(walkTree(rootWidget), Layout.class);
     }
 
+    //we suppress this since we know that viewgroup processor is always there
+    @SuppressWarnings("ConstantConditions")
     private Layout walkTree(@NonNull BaseWidget widget) {
 
         View view = widget.getAsView();
 
         Layout layout = widget.getViewManager().getLayout();
-
+        layout.tagAttributes = new LinkedHashSet<>((Collection<? extends Attribute>) view.getTag(R.id.attributes));
         if (view instanceof ViewGroup) {
 
 
@@ -354,6 +361,7 @@ public class DesignActivity extends AppCompatActivity {
             }
 
             Layout.Attribute attr = new Layout.Attribute(editorView.getEditor().getAttributeId("android:children", "ViewGroup").id, new Primitive(""));
+
             if (layout.attributes.contains(attr)) {
                 layout.attributes.set(layout.attributes.indexOf(attr), new Layout.Attribute(editorView.getEditor().getAttributeId("android:children", "ViewGroup").id, new com.tyron.layouteditor.values.Array(childLayout.toArray(new Layout[0]))));
             } else {
@@ -365,6 +373,7 @@ public class DesignActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("rawtypes")
     private void refreshViewHierarchy(){
         List<TreeNode> nodes = new ArrayList<>();
 

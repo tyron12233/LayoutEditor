@@ -5,9 +5,11 @@ import androidx.annotation.Nullable;
 
 import com.tyron.layouteditor.parser.IncludeParser;
 import com.tyron.layouteditor.parser.ViewParser;
+import com.tyron.layouteditor.parser.compat.CoordinatorLayoutParser;
+import com.tyron.layouteditor.parser.compat.MaterialCardViewParser;
 import com.tyron.layouteditor.parser.custom.ButtonParser;
-import com.tyron.layouteditor.parser.custom.CardViewParser;
-import com.tyron.layouteditor.parser.custom.ConstraintLayoutParser;
+import com.tyron.layouteditor.parser.compat.CardViewParser;
+import com.tyron.layouteditor.parser.compat.ConstraintLayoutParser;
 import com.tyron.layouteditor.parser.custom.EditTextParser;
 import com.tyron.layouteditor.parser.custom.FrameLayoutParser;
 import com.tyron.layouteditor.parser.custom.ImageViewParser;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@SuppressWarnings("rawtypes")
 public class EditorBuilder {
 
     public static final Module DEFAULT_MODULE = new Module() {
@@ -51,8 +54,10 @@ public class EditorBuilder {
 //            builder.register(new HorizontalProgressBarParser());
 
             builder.register(new ConstraintLayoutParser());
-
+            builder.register(new CoordinatorLayoutParser());
             builder.register(new CardViewParser());
+            builder.register(new MaterialCardViewParser());
+
             // register the default functions
             builder.register(Function.DATE);
             builder.register(Function.FORMAT);

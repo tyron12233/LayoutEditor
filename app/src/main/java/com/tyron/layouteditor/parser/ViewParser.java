@@ -21,11 +21,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.EditorConstants;
 import com.tyron.layouteditor.editor.EditorContext;
@@ -42,6 +45,7 @@ import com.tyron.layouteditor.processor.DimensionAttributeProcessor;
 import com.tyron.layouteditor.processor.DrawableResourceProcessor;
 import com.tyron.layouteditor.processor.GravityAttributeProcessor;
 import com.tyron.layouteditor.processor.StringAttributeProcessor;
+import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.values.AttributeResource;
 import com.tyron.layouteditor.values.Color;
 import com.tyron.layouteditor.values.Layout;
@@ -103,9 +107,9 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
 
                         if(path.equals(EditorConstants.DATA_NULL)){
                             //use default image
-                            setBackground(view, R.drawable.ic_warning);
+                            AndroidUtilities.setBackground(view, R.drawable.ic_warning);
                         }else{
-                            setBackground(view, path);
+                            AndroidUtilities.setBackground(view, path);
                         }
                     }else{
                         throw new IllegalStateException("View is not an instance of BaseWidget");
@@ -204,6 +208,7 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
                 }
             }
         });
+
 
         addAttributeProcessor(Attributes.View.Padding, new DimensionAttributeProcessor<V>() {
             @Override
@@ -486,6 +491,61 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
             }
         });
 
+        addAttributeProcessor(CompatAttributes.CoordinatorLayout.Behavior, new StringAttributeProcessor<V>() {
+            @Override
+            public void setString(V view, String value) {
+                if(!(value.startsWith("@"))){
+                    ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                    if(params instanceof CoordinatorLayout.LayoutParams){
+                        CoordinatorLayout.LayoutParams cParams = (CoordinatorLayout.LayoutParams)params;
+                        cParams.setBehavior(AndroidUtilities.parseBehavior(view.getContext(), null, value));
+                        view.setLayoutParams(cParams);
+                    }else{
+                        Log.e(TAG, "CoordinatorLayout behavior can only be set on coordinator layout childs");
+                    }
+                }
+            }
+        });
+
+        addAttributeProcessor(CompatAttributes.CoordinatorLayout.Hideable, new BooleanAttributeProcessor<V>() {
+            @Override
+            public void setBoolean(V view, boolean value) {
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                if(params instanceof CoordinatorLayout.LayoutParams){
+                    CoordinatorLayout.LayoutParams cParams = (CoordinatorLayout.LayoutParams)params;
+
+                    CoordinatorLayout.Behavior<V> behavior = cParams.getBehavior();
+
+                    if(behavior instanceof BottomSheetBehavior){
+                        ((BottomSheetBehavior<V>) behavior).setHideable(value);
+                    }
+                }else{
+                    Log.e(TAG, "CoordinatorLayout behavior can only be set on coordinator layout childs");
+                }
+            }
+        });
+
+        addAttributeProcessor(CompatAttributes.CoordinatorLayout.PeekHeight, new DimensionAttributeProcessor<V>() {
+            @Override
+            public void setDimension(V view, float dimension) {
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+
+                if(params instanceof CoordinatorLayout.LayoutParams){
+                    CoordinatorLayout.LayoutParams cParams = (CoordinatorLayout.LayoutParams)params;
+
+                    CoordinatorLayout.Behavior<V> behavior = cParams.getBehavior();
+
+                    if(behavior instanceof BottomSheetBehavior){
+                        ((BottomSheetBehavior<V>) behavior).setPeekHeight((int) dimension, true);
+                    }
+                }else{
+                    Log.e(TAG, "CoordinatorLayout behavior can only be set on coordinator layout childs");
+                }
+            }
+        });
+
         addAttributeProcessor(Attributes.View.Above, createRelativeLayoutRuleProcessor(RelativeLayout.ABOVE));
         addAttributeProcessor(Attributes.View.AlignBaseline, createRelativeLayoutRuleProcessor(RelativeLayout.ALIGN_BASELINE));
         addAttributeProcessor(Attributes.View.AlignBottom, createRelativeLayoutRuleProcessor(RelativeLayout.ALIGN_BOTTOM));
@@ -579,31 +639,5 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
         };
     }
 
-    private void setBackground(View view, String path){
-        Glide.with(view).load(path).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                view.setBackground(resource);
-            }
 
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {
-                view.setBackground(placeholder);
-            }
-        });
-    }
-
-    private void setBackground(View view, @DrawableRes int id){
-        Glide.with(view).load(id).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                view.setBackground(resource);
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {
-                view.setBackground(placeholder);
-            }
-        });
-    }
 }

@@ -457,7 +457,7 @@ public class EditorTypeAdapterFactory implements TypeAdapterFactory {
           }
         }
       }
-      return new Layout(type, attributes.size() > 0 ? attributes : null, data, extras.entrySet().size() > 0 ? extras : null);
+      return new Layout(type, attributes.size() > 0 ? attributes : null, data, extras.entrySet().size() > 0 ? extras : null, null);
     }
 
     public Map<String, Value> readData(JsonReader in) throws IOException {

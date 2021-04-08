@@ -584,7 +584,7 @@ public class DefaultModule implements EditorTypeAdapterFactory.Module {
           }
 
           //noinspection ConstantConditions
-          return new Layout(type, attributes, data, extras);
+          return new Layout(type, attributes, data, extras, null);
         }
 
         @Nullable

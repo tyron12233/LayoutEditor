@@ -5,10 +5,12 @@ import android.view.InflateException;
 import android.view.ViewGroup;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.ObjectValue;
@@ -83,6 +85,11 @@ public class SimpleLayoutInflater implements EditorLayoutInflater {
         if (layout.attributes != null) {
             Iterator<Layout.Attribute> iterator = layout.attributes.iterator();
             Layout.Attribute attribute;
+
+            //save attributes into a view tag so we can edit it later
+            if(layout.tagAttributes != null) {
+                view.getAsView().setTag(R.id.attributes, new LinkedHashSet<>(layout.tagAttributes));
+            }
             while (iterator.hasNext()) {
                 attribute = iterator.next();
                 handleAttribute(parser, view, attribute.id, attribute.value);

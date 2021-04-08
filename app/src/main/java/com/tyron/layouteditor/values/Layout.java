@@ -8,6 +8,7 @@ import com.tyron.layouteditor.util.Utils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +26,15 @@ public class Layout extends Value {
     @Nullable
     public final ObjectValue extras;
 
-    public Layout(@NonNull String type, @Nullable List<Attribute> attributes, @Nullable Map<String, Value> data, @Nullable ObjectValue extras) {
+    @Nullable
+    public LinkedHashSet<com.tyron.layouteditor.models.Attribute> tagAttributes = new LinkedHashSet<>();
+
+    public Layout(@NonNull String type, @Nullable List<Attribute> attributes, @Nullable Map<String, Value> data, @Nullable ObjectValue extras, LinkedHashSet<com.tyron.layouteditor.models.Attribute> tagAttributes) {
         this.type = type;
         this.attributes = attributes;
         this.data = data;
         this.extras = extras;
+        this.tagAttributes = tagAttributes;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class Layout extends Value {
             }
         }
 
-        return new Layout(type, attributes, data, extras);
+        return new Layout(type, attributes, data, extras,tagAttributes);
     }
 
     public Layout merge(Layout include) {
@@ -52,13 +57,14 @@ public class Layout extends Value {
             attributes = new ArrayList<>(this.attributes.size());
             attributes.addAll(this.attributes);
         }
+
+
         if (include.attributes != null) {
             if (attributes == null) {
                 attributes = new ArrayList<>(include.attributes.size());
             }
             attributes.addAll(include.attributes);
         }
-
         Map<String, Value> data = null;
         if (this.data != null) {
             data = this.data;
@@ -81,7 +87,7 @@ public class Layout extends Value {
             Utils.addAllEntries(extras, include.extras);
         }
 
-        return new Layout(type, attributes, data, extras);
+        return new Layout(type, attributes, data, extras, tagAttributes);
     }
 
     /**

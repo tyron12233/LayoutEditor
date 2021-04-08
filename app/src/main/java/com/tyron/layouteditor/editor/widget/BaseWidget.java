@@ -1,7 +1,10 @@
 package com.tyron.layouteditor.editor.widget;
 
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -9,15 +12,19 @@ import androidx.annotation.Nullable;
 
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.google.android.material.card.MaterialCardView;
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.DataContext;
 import com.tyron.layouteditor.editor.EditorContext;
 import com.tyron.layouteditor.ViewManager;
+import com.tyron.layouteditor.editor.widget.viewgroup.FrameLayoutItem;
 import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
 import com.tyron.layouteditor.editor.widget.viewgroup.RelativeLayoutItem;
 import com.tyron.layouteditor.editor.widget.compat.CompatAttributes;
 import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Layout;
 import com.tyron.layouteditor.values.ObjectValue;
@@ -81,21 +88,35 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
         attrs.add(Attributes.View.MarginEnd);
         attrs.add(Attributes.View.MarginStart);
 
-        if(view instanceof TextView){
+        if(AndroidUtilities.isAssignableFrom(LinearLayout.class.getName(), view)){
+            attrs.add(Attributes.View.Gravity);
+        }
+
+        if(AndroidUtilities.isAssignableFrom(TextView.class.getName(), view)){
             attrs.add(Attributes.TextView.Text);
             attrs.add(Attributes.TextView.TextColor);
             attrs.add(Attributes.TextView.TextSize);
             attrs.add(Attributes.TextView.Hint);
+            attrs.add(Attributes.TextView.Gravity);
             attrs.add(Attributes.TextView.TextColorHint);
+            attrs.add(Attributes.TextView.TextStyle);
         }
 
-        if(view instanceof ImageView){
+        if(AndroidUtilities.isAssignableFrom(ImageView.class.getName(), view)){
             attrs.add(Attributes.ImageView.ScaleType);
             attrs.add(Attributes.ImageView.AdjustViewBounds);
             attrs.add(Attributes.ImageView.Src);
         }
 
-        if(view instanceof CardView){
+        if(AndroidUtilities.isAssignableFrom(MaterialCardView.class.getName(), view)){
+            attrs.add(CompatAttributes.MaterialCardView.Checkable);
+            attrs.add(CompatAttributes.MaterialCardView.CheckedIconSize);
+            attrs.add(CompatAttributes.MaterialCardView.RippleColor);
+            attrs.add(CompatAttributes.MaterialCardView.ForegroundColor);
+            attrs.add(CompatAttributes.MaterialCardView.CheckedIcon);
+            attrs.add(CompatAttributes.MaterialCardView.CheckedIconMargin);
+        }
+        if(AndroidUtilities.isAssignableFrom(CardView.class.getName(), view)){
             attrs.add(CompatAttributes.CardView.BackgroundColor);
             attrs.add(CompatAttributes.CardView.ContentPadding);
             attrs.add(CompatAttributes.CardView.ContentPaddingBottom);
@@ -110,7 +131,7 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
         }
 
         //relative layout child attributes
-        if(view.getParent() instanceof RelativeLayoutItem){
+        if(AndroidUtilities.isAssignableFrom(RelativeLayout.class.getName(), (View) view.getParent())){
             attrs.add(Attributes.View.ToLeftOf);
             attrs.add(Attributes.View.ToStartOf);
             attrs.add(Attributes.View.ToRightOf);
@@ -135,12 +156,22 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
             attrs.add(Attributes.View.AlignParentEnd);
         }
 
-        if(view.getParent() instanceof LinearLayoutItem){
+        if(AndroidUtilities.isChildOf(CoordinatorLayout.class.getName(), view)){
+            attrs.add(CompatAttributes.CoordinatorLayout.Behavior);
+            attrs.add(CompatAttributes.CoordinatorLayout.Hideable);
+            attrs.add(CompatAttributes.CoordinatorLayout.PeekHeight);
+        }
+
+        if(AndroidUtilities.isAssignableFrom(LinearLayout.class.getName(), (View) view.getParent())){
             attrs.add(Attributes.View.Weight);
-            attrs.add(Attributes.View.Gravity);
+            attrs.add(Attributes.View.LayoutGravity);
+        }
+
+        if(AndroidUtilities.isAssignableFrom(FrameLayout.class.getName(), (View) view.getParent())){
+            attrs.add(Attributes.View.LayoutGravity);
         }
 		
-		if(view.getParent() instanceof ConstraintLayout){
+		if(AndroidUtilities.isAssignableFrom(ConstraintLayout.class.getName(), (View) view.getParent())){
 			attrs.add(CompatAttributes.ConstraintLayout.LeftToLeftOf);
 			attrs.add(CompatAttributes.ConstraintLayout.LeftToRightOf);
 			attrs.add(CompatAttributes.ConstraintLayout.RightToLeftOf);
