@@ -230,6 +230,13 @@ public class EditorView extends LinearLayout {
 
         if (view instanceof ViewGroup) {
 
+            LayoutTransition layoutTransition = new LayoutTransition();
+            layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+            layoutTransition.disableTransitionType(LayoutTransition.DISAPPEARING);
+            layoutTransition.setDuration(180L);
+            ((ViewGroup) view).setLayoutTransition(layoutTransition);
+            ((ViewGroup) view).setAnimationCacheEnabled(true);
+
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
 
                 View child = ((ViewGroup) view).getChildAt(i);
@@ -252,7 +259,7 @@ public class EditorView extends LinearLayout {
 
     public void importLayout(Layout layout) {
         removeAllViews();
-        View view = layoutInflater.inflate(layout, null, this, -1).getAsView();
+        View view = layoutInflater.inflate(layout, null).getAsView();
 
         addView(view);
         setViewListeners(view);

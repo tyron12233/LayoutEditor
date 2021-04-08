@@ -80,6 +80,7 @@ public class DesignActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private EditorView editorView;
 
+    private DynamicLayoutInflater inflater;
     private final float bottomSheetRadius = AndroidUtilities.dp(16);
 
     @Override
@@ -179,7 +180,7 @@ public class DesignActivity extends AppCompatActivity {
         });
 
         WidgetFactory factory = new WidgetFactory(editorView.getEditorContext(), editorView.getEditor(), editorView);
-        DynamicLayoutInflater inflater = DynamicLayoutInflater.base(editorView.getEditorContext())
+        inflater = DynamicLayoutInflater.base(editorView.getEditorContext())
                 .setWidgetFactory(factory)
                 .setFactory2(new EditorFactory(factory))
                 .create();
@@ -293,8 +294,8 @@ public class DesignActivity extends AppCompatActivity {
                 //inflate the xml
                 //remove all views from previous layout
                 editorView.removeAllViews();
-                AsyncDynamicLayoutInflater asyncDynamicLayoutInflater = new AsyncDynamicLayoutInflater(editorView.getEditorContext());
-                editorView.setViewListeners(DynamicLayoutInflater.from(editorView.getEditorContext()).inflate(content, editorView));
+
+                editorView.setViewListeners(inflater.inflate(content, editorView));
 
             } catch (FileNotFoundException e) {
                 Log.e("ACTIVITY RESULT", "File not found: " + returnUri);
