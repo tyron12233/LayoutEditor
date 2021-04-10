@@ -90,6 +90,7 @@ public interface BaseWidget extends NotificationCenter.NotificationCenterDelegat
 
         if(AndroidUtilities.isAssignableFrom(LinearLayout.class.getName(), view)){
             attrs.add(Attributes.View.Gravity);
+            attrs.add(Attributes.LinearLayout.Orientation);
         }
 
         if(AndroidUtilities.isAssignableFrom(TextView.class.getName(), view)){

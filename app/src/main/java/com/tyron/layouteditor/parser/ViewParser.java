@@ -595,7 +595,7 @@ public class ViewParser<V extends View> extends ViewTypeParser<V> {
 					ConstraintSet set = new ConstraintSet();
 
 					int id;
-					if(value.equals("parent")) {
+					if(!value.equals("parent")) {
 					    id = ((BaseWidget) view).getViewManager().getContext().getInflater().getUniqueViewId(value);
                     }else{
 					    id = ConstraintSet.PARENT_ID;

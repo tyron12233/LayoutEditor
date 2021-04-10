@@ -1,8 +1,15 @@
 package com.tyron.layouteditor.editor;
 
 import android.animation.LayoutTransition;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff;
 import android.view.DragEvent;
@@ -14,7 +21,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
+import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.animation.ArgbEvaluatorCompat;
 import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
@@ -32,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class EditorView extends LinearLayout {
 
@@ -40,7 +50,9 @@ public class EditorView extends LinearLayout {
     private final Editor editor;
     private final DrawableManager drawableManager;
 	
-	private Drawable preFocusedDrawable;
+	Rect focusedRect = new Rect();
+	private Paint focusedPaint = new Paint();
+	private boolean isFocused = false;
 	
     View.OnLongClickListener onLongClickListener = v -> {
         ViewCompat.startDragAndDrop(v, null, new DragShadowBuilder(v), v, 0);
@@ -50,20 +62,29 @@ public class EditorView extends LinearLayout {
     View.OnClickListener onClickListener = v -> {
         BaseWidget currentWidget = (BaseWidget) v;
         final PropertiesView d = PropertiesView.newInstance(currentWidget);
-        d.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "");
+
+        FragmentManager fm = AndroidUtilities.getActivity(getContext()).getSupportFragmentManager();
+
+        d.show(fm, "");
+
+        //make sure that dialog has been opened
+        fm.executePendingTransactions();
+
+        //after the dialog has been dismissed, we remove the focused color
+        Objects.requireNonNull(d.getDialog()).setOnDismissListener(new DialogInterface.OnDismissListener(){
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isFocused = false;
+                invalidate();
+            }
+        });
+
+        //gets the bounds of views so we can draw the box
+        v.getHitRect(focusedRect);
+        isFocused = true;
+        animateColorChange(0xffffffff, 0x12000000);
     };
-	
-	View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener(){
-		@Override
-		public void onFocusChange(View view, boolean focused){
-			if(focused){
-				preFocusedDrawable = view.getBackground();
-				view.setBackgroundColor(0xce000000);
-			}else{
-			    view.setBackground(preFocusedDrawable);
-			}
-		}
-	};
+
     /**
      * The view that represents the shadow
      */
@@ -120,7 +141,6 @@ public class EditorView extends LinearLayout {
                     //so it can be dragged on too
                     view.getAsView().setOnDragListener(this);
                     view.getAsView().setOnClickListener(onClickListener);
-					view.getAsView().setOnFocusChangeListener(onFocusChangeListener);
                     view.getAsView().setOnLongClickListener(onLongClickListener);
 
                     if(view.getAsView() instanceof ViewGroup){
@@ -159,9 +179,11 @@ public class EditorView extends LinearLayout {
                 		int index = 0;
                 		if((hostView instanceof LinearLayoutItem) && ((LinearLayoutItem) hostView).getOrientation() == LinearLayout.VERTICAL) {
 							index = getVerticalIndexForEvent(hostView, event);
-						}else{
+						}else if((hostView instanceof LinearLayoutItem) && ((LinearLayoutItem) hostView).getOrientation() == LinearLayout.HORIZONTAL){
                 			index = getHorizontalIndexForEvent(hostView, event);
-						}
+						}else{
+                		    index = indexOfChild;
+                        }
 
                 		if(indexOfChild != index){
                 			hostView.removeView(shadow);
@@ -175,7 +197,6 @@ public class EditorView extends LinearLayout {
             return true;
         }
     };
-    private LinearLayoutItem root;
 
     public EditorView(Context context) {
         super(context);
@@ -211,13 +232,15 @@ public class EditorView extends LinearLayout {
 
     private void init() {
         setOrientation(VERTICAL);
-
+        setWillNotDraw(false);
 
         shadow = new View(getContext());
         shadow.setBackgroundColor(0x52000000);
         shadow.setLayoutParams(new ViewGroup.LayoutParams(AndroidUtilities.dp(100), AndroidUtilities.dp(50)));
         shadow.setMinimumWidth(AndroidUtilities.dp(50));
         shadow.setMinimumHeight(AndroidUtilities.dp(50));
+
+        focusedPaint.setColor(0x12000000);;
     }
 
     /**
@@ -251,12 +274,26 @@ public class EditorView extends LinearLayout {
             if (view instanceof ViewGroup) {
                 view.setOnDragListener(dragListener);
             }
-			view.setOnFocusChangeListener(onFocusChangeListener);
             view.setOnClickListener(onClickListener);
         }
     }
 
+    @Override
+    public void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
 
+        //draws on the current focused rect
+        if(isFocused){
+            canvas.drawRect(focusedRect, focusedPaint);
+        }
+    }
+
+    /**
+     * Convenience method to import a layout and set the appropriate listeners
+     * for each view
+     *
+     * @param layout layout to be inflated
+     */
     public void importLayout(Layout layout) {
         removeAllViews();
         View view = layoutInflater.inflate(layout, null).getAsView();
@@ -287,10 +324,16 @@ public class EditorView extends LinearLayout {
 
 	}
 
+    /**
+     * Calculates the horizontal index on which the view is going to be inserted
+     *
+     * @param parent Parent View
+     * @param event DragEvent associated with the view
+     * @return  returns the index on where to insert the view
+     */
 	private int getHorizontalIndexForEvent(ViewGroup parent, DragEvent event){
 
     	int dropX = (int) event.getX();
-    	int dropY = (int) event.getY();
 
     	int index = 0;
 
@@ -308,9 +351,15 @@ public class EditorView extends LinearLayout {
     	return index;
 	}
 
+    /**
+     * Calculates the vertical index on which the view is going to be inserted
+     *
+     * @param parent Parent View
+     * @param event DragEvent associated with the view
+     * @return  returns the index on where to insert the view
+     */
 	private int getVerticalIndexForEvent(ViewGroup parent, DragEvent event){
 
-		int dropX = (int) event.getX();
 		int dropY = (int) event.getY();
 
 		int index = 0;
@@ -329,7 +378,14 @@ public class EditorView extends LinearLayout {
 
 		return index;
 	}
-	
+
+    /**
+     * Self explanatory, gets the child count of the view
+     * with the shadow view excluded
+     *
+     * @param view ViewGroup to be counted
+     * @return returns the number of child without the shadow
+     */
 	public int getChildCountWithoutShadow(ViewGroup view){
 		
 		int count = 0;
@@ -344,6 +400,11 @@ public class EditorView extends LinearLayout {
 		return count;
 	}
 
+    /**
+     * Adds default attributes to a newly created widget
+     *
+     * @param widget widget to be modified
+     */
 	private void addDefaultAttributes(BaseWidget widget){
         View view = widget.getAsView();
         List<Attribute> attributes = new ArrayList<>();
@@ -377,6 +438,12 @@ public class EditorView extends LinearLayout {
         //view.setTag(R.id.attributes, new LinkedHashSet<>(attributes));
     }
 
+    /**
+     * get all the images from data/com.tyron.layouteditor/files/images
+     * and saves them to a {@link DrawableManager} for use later
+     *
+     * @return returns a HashMap of it's name and path
+     */
     public HashMap<String, String> getImages(){
         HashMap<String, String> images = new HashMap<>();
         ArrayList<String> filePaths = new ArrayList<>();
@@ -387,5 +454,25 @@ public class EditorView extends LinearLayout {
             images.put(file.getName().substring(0, file.getName().lastIndexOf(".")), file.getPath());
         }
         return images;
+    }
+
+
+    /**
+     * animates between two colors
+     * @param start start color
+     * @param end end color
+     */
+    private void animateColorChange(int start, int end){
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+        animator.setEvaluator(new ArgbEvaluatorCompat());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                final int newColor = (int) animator.getAnimatedValue();
+                focusedPaint.setColor(newColor);
+                invalidate();
+            }
+        });
+        animator.start();
     }
 }
