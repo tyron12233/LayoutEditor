@@ -240,6 +240,9 @@ public class EditTextDialog extends DialogFragment {
             case Attributes.TYPE_BOOLEAN:
                 editText.setAdapter(new StringAutoCompleteAdapter(getActivity(), R.layout.edittext_dialog, R.id.lbl_name, new ArrayList<String>(Arrays.asList("true", "false"))));
                 break;
+            case Attributes.TYPE_COLOR:
+                textInput_id.setEndIconDrawable(R.drawable.ic_color_palette);
+                break;
         }
         return true;
     }

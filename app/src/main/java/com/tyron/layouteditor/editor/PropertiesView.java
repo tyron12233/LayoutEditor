@@ -2,6 +2,8 @@ package com.tyron.layouteditor.editor;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +15,12 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Slide;
+import androidx.transition.TransitionManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +29,7 @@ import com.tyron.layouteditor.editor.dialog.EditTextDialog;
 import com.tyron.layouteditor.adapters.AttributesAdapter;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.models.Attribute;
+import com.tyron.layouteditor.toolbox.HidingLayoutBehavior;
 import com.tyron.layouteditor.util.AndroidUtilities;
 import com.tyron.layouteditor.util.NotificationCenter;
 import com.tyron.layouteditor.values.Value;
@@ -44,7 +51,12 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 	
 	private AttributesAdapter adapter;
 	private RecyclerView recyclerView;
-	
+
+	private boolean popupVisible = true;
+
+	private CardView addAttribute;
+	private View view;
+
 	public PropertiesView() {
 		
 	}
@@ -83,20 +95,22 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 		availableAttributes = getArguments().getStringArrayList("availableAttributes");
 		idGenerator = getArguments().getParcelable("idGenerator");
 		targetId = getArguments().getString("id");
+
+
 	}
 	
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		
-		View view = inflater.inflate(R.layout.property_view, container, false);
+		view = inflater.inflate(R.layout.property_view, container, false);
 		
 		adapter = new AttributesAdapter(targetId, attributes, availableAttributes, idGenerator);
 		recyclerView = view.findViewById(R.id.recyclerview_items);
 		recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 		recyclerView.setAdapter(adapter);
 		
-		CardView addAttribute = view.findViewById(R.id.addAttr);
+		addAttribute = view.findViewById(R.id.addAttr);
 		
 		addAttribute.setOnClickListener((v) -> {
 			Attribute attribute = new Attribute("", new Primitive(""));
@@ -104,21 +118,48 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 
 			dialog.show(AndroidUtilities.getActivity(getContext()).getSupportFragmentManager(), "");
 		});
-		
 		return view;
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		Window window = getDialog().getWindow();
 		WindowManager.LayoutParams windowParams = window.getAttributes();
 		windowParams.dimAmount = 0f;
 		windowParams.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 		window.setAttributes(windowParams);
+
+		addAttribute.post(()-> addAttribute.setVisibility(View.VISIBLE));
+		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+
+				Slide slide = new Slide(Gravity.BOTTOM);
+				slide.setDuration(180L);
+				slide.setInterpolator(new FastOutSlowInInterpolator());
+				TransitionManager.beginDelayedTransition((ViewGroup) view, slide);
+
+				if(dx > 0){
+					if(popupVisible){
+						popupVisible = false;
+						addAttribute.setVisibility(View.GONE);
+					}
+				}else{
+
+					if(!popupVisible){
+						popupVisible = true;
+						addAttribute.setVisibility(View.VISIBLE);
+					}
+				}
+			}
+		});
+
+
 	}
-	
+
 	@Override
 	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
@@ -140,7 +181,7 @@ public class PropertiesView extends BottomSheetDialogFragment implements Notific
 		    
 			//this.attributes.clear();
 			//this.attributes.addAll(noDuplicates);
-			adapter.updateData(new ArrayList<Attribute>(noDuplicates));
+			adapter.updateData(new ArrayList<>(noDuplicates));
 		}
 	}
 }

@@ -38,6 +38,7 @@ public class AndroidUtilities {
     public static DisplayMetrics displayMetrics = new DisplayMetrics();
 
     static final String WIDGET_PACKAGE_NAME;
+    @SuppressWarnings("rawtypes")
     static final ThreadLocal<Map<String, Constructor<CoordinatorLayout.Behavior>>> sConstructors =
             new ThreadLocal<>();
     static final Class<?>[] CONSTRUCTOR_PARAMS = new Class<?>[] {
@@ -264,5 +265,16 @@ public class AndroidUtilities {
                 view.setBackground(placeholder);
             }
         });
+    }
+
+    public static int getStatusBarHeight(Context context){
+        int statusBarHeight = 0;
+
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+           statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
+        }
+
+        return statusBarHeight;
     }
 }

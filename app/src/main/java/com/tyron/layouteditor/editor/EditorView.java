@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,10 @@ import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.google.android.material.animation.ArgbEvaluatorCompat;
+import com.tyron.layouteditor.R;
 import com.tyron.layouteditor.editor.widget.Attributes;
 import com.tyron.layouteditor.editor.widget.BaseWidget;
 import com.tyron.layouteditor.editor.widget.viewgroup.LinearLayoutItem;
@@ -42,6 +45,8 @@ public class EditorView extends LinearLayout {
     private final Editor editor;
     private final DrawableManager drawableManager;
 
+    private boolean ignoreClick = false;
+
     Rect focusedRect = new Rect();
     View.OnLongClickListener onLongClickListener = v -> {
         ViewCompat.startDragAndDrop(v, null, new DragShadowBuilder(v), v, 0);
@@ -51,26 +56,46 @@ public class EditorView extends LinearLayout {
     private final Paint focusedPaint = new Paint();
     private boolean isFocused = false;
     View.OnClickListener onClickListener = v -> {
+
+        if(ignoreClick){
+            return;
+        }
+
         BaseWidget currentWidget = (BaseWidget) v;
         final PropertiesView d = PropertiesView.newInstance(currentWidget);
 
         FragmentManager fm = AndroidUtilities.getActivity(getContext()).getSupportFragmentManager();
 
         d.show(fm, "");
-
+        ignoreClick = true;
         //make sure that dialog has been opened
         fm.executePendingTransactions();
 
         //after the dialog has been dismissed, we remove the focused color
         Objects.requireNonNull(d.getDialog()).setOnDismissListener(dialog -> {
             isFocused = false;
+            ignoreClick = false;
             invalidate();
         });
 
         //gets the bounds of views so we can draw the box
-        v.getHitRect(focusedRect);
+
+        int[] location = new int[2];
+        v.getLocationInWindow(location);
+
+        int y = location[1];
+
+        TypedValue typedValue = new TypedValue();
+        if(getContext().getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true)){
+            y = location[1] - (TypedValue.complexToDimensionPixelSize(typedValue.data, getContext().getResources().getDisplayMetrics()) + AndroidUtilities.getStatusBarHeight(getContext()));
+        }
+        focusedRect.left = location[0];
+        focusedRect.top = y;
+        focusedRect.right = location[0] + v.getWidth();
+        focusedRect.bottom = y + v.getHeight();
+
         isFocused = true;
-        animateColorChange(0xffffffff, 0x12000000);
+        invalidate();
     };
 
     /**
@@ -225,7 +250,7 @@ public class EditorView extends LinearLayout {
         shadow.setMinimumWidth(AndroidUtilities.dp(50));
         shadow.setMinimumHeight(AndroidUtilities.dp(50));
 
-        focusedPaint.setColor(0x12000000);
+        focusedPaint.setColor(0x1e000000);
     }
 
     /**
@@ -440,26 +465,5 @@ public class EditorView extends LinearLayout {
             images.put(file.getName().substring(0, file.getName().lastIndexOf(".")), file.getPath());
         }
         return images;
-    }
-
-
-    /**
-     * animates between two colors
-     *
-     * @param start start color
-     * @param end   end color
-     */
-    private void animateColorChange(int start, int end) {
-        ValueAnimator animator = ValueAnimator.ofInt(start, end);
-        animator.setEvaluator(new ArgbEvaluatorCompat());
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                final int newColor = (int) animator.getAnimatedValue();
-                focusedPaint.setColor(newColor);
-                invalidate();
-            }
-        });
-        animator.start();
     }
 }
